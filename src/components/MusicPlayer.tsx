@@ -4,17 +4,21 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const MUSIC_TRACKS = [
-  { youtubeId: "k2qgadSvNyU", startAt: 12 },
+  { youtubeId: "k2qgadSvNyU", startAt: 12, title: "Track 1" },
 ];
 
 export default function MusicPlayer() {
   const [asked, setAsked] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [showPrompt, setShowPrompt] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [currentTrack, setCurrentTrack] = useState(0);
+  const [volume, setVolume] = useState(50);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const playerReady = useRef(false);
+  const iframeSrc = useRef("");
 
-  // Show prompt after loading screen finishes
+  // Show prompt after loading screen
   useEffect(() => {
     const timer = setTimeout(() => {
       const dismissed = sessionStorage.getItem("music-dismissed");
@@ -27,22 +31,34 @@ export default function MusicPlayer() {
     return () => clearTimeout(timer);
   }, []);
 
-  const postCommand = useCallback((command: string, args?: Record<string, unknown>) => {
-    if (iframeRef.current?.contentWindow) {
-      const msg: Record<string, unknown> = { event: "command", func: command };
-      if (args) Object.assign(msg, args);
-      iframeRef.current.contentWindow.postMessage(
-        JSON.stringify(msg),
-        "https://www.youtube.com"
-      );
-    }
-  }, []);
+  const buildEmbedUrl = useCallback(
+    (trackIndex: number, autoplay: boolean) => {
+      const t = MUSIC_TRACKS[trackIndex];
+      return `https://www.youtube.com/embed/${t.youtubeId}?start=${t.startAt}&autoplay=${autoplay ? 1 : 0}&enablejsapi=1&loop=1&playlist=${t.youtubeId}&controls=0&showinfo=0&rel=0&modestbranding=1&origin=${typeof window !== "undefined" ? window.location.origin : ""}`;
+    },
+    []
+  );
+
+  const postCommand = useCallback(
+    (func: string, args?: Record<string, unknown>) => {
+      if (iframeRef.current?.contentWindow) {
+        const msg: Record<string, unknown> = { event: "command", func };
+        if (args) Object.assign(msg, args);
+        iframeRef.current.contentWindow.postMessage(
+          JSON.stringify(msg),
+          "https://www.youtube.com"
+        );
+      }
+    },
+    []
+  );
 
   const handleAccept = () => {
     setShowPrompt(false);
     setAsked(true);
     setPlaying(true);
     playerReady.current = true;
+    iframeSrc.current = buildEmbedUrl(0, true);
   };
 
   const handleDecline = () => {
@@ -54,6 +70,7 @@ export default function MusicPlayer() {
   const togglePlay = () => {
     if (!playerReady.current) {
       playerReady.current = true;
+      iframeSrc.current = buildEmbedUrl(currentTrack, true);
       setPlaying(true);
       return;
     }
@@ -65,19 +82,35 @@ export default function MusicPlayer() {
     setPlaying(!playing);
   };
 
-  const track = MUSIC_TRACKS[0];
-  const embedUrl = `https://www.youtube.com/embed/${track.youtubeId}?start=${track.startAt}&autoplay=${playing ? 1 : 0}&enablejsapi=1&loop=1&playlist=${track.youtubeId}&controls=0&showinfo=0&rel=0&modestbranding=1`;
+  const nextTrack = () => {
+    const next = (currentTrack + 1) % MUSIC_TRACKS.length;
+    setCurrentTrack(next);
+    iframeSrc.current = buildEmbedUrl(next, true);
+    setPlaying(true);
+  };
+
+  const prevTrack = () => {
+    const prev = (currentTrack - 1 + MUSIC_TRACKS.length) % MUSIC_TRACKS.length;
+    setCurrentTrack(prev);
+    iframeSrc.current = buildEmbedUrl(prev, true);
+    setPlaying(true);
+  };
+
+  const handleVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = Number(e.target.value);
+    setVolume(val);
+    postCommand("setVolume", { args: [val] });
+  };
 
   return (
     <>
       {/* Hidden YouTube iframe */}
-      {asked && playing && (
+      {asked && iframeSrc.current && (
         <iframe
           ref={iframeRef}
-          src={embedUrl}
-          className="hidden"
-          width="0"
-          height="0"
+          key={iframeSrc.current}
+          src={iframeSrc.current}
+          className="fixed w-0 h-0 opacity-0 pointer-events-none"
           allow="autoplay; encrypted-media"
           title="Background Music"
         />
@@ -99,7 +132,6 @@ export default function MusicPlayer() {
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
               className="bg-storm-dark border border-white/10 rounded-2xl p-8 max-w-sm w-full text-center"
             >
-              {/* Music icon */}
               <div className="w-16 h-16 mx-auto mb-5 rounded-full bg-storm-red/10 flex items-center justify-center">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E63946" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 18V5l12-2v13" />
@@ -107,14 +139,12 @@ export default function MusicPlayer() {
                   <circle cx="18" cy="16" r="3" />
                 </svg>
               </div>
-
               <h3 className="text-xl font-bold text-storm-light mb-2">
                 Enable Background Music?
               </h3>
               <p className="text-sm text-storm-muted mb-6">
                 Enhance your experience with ambient music while browsing.
               </p>
-
               <div className="flex gap-3">
                 <button
                   onClick={handleDecline}
@@ -134,30 +164,140 @@ export default function MusicPlayer() {
         )}
       </AnimatePresence>
 
-      {/* Play/Pause toggle in header area */}
+      {/* Bottom-left floating controller */}
       {asked && (
-        <motion.button
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3, type: "spring" }}
-          onClick={togglePlay}
-          className="fixed top-[18px] right-20 md:right-48 z-[52] w-8 h-8 rounded-full bg-storm-gray/60 backdrop-blur-sm border border-white/10 flex items-center justify-center hover:border-storm-red/40 hover:bg-storm-gray transition-all duration-300 group"
-          aria-label={playing ? "Pause music" : "Play music"}
-          title={playing ? "Pause music" : "Play music"}
-        >
-          {playing ? (
-            /* Pause icon with animated bars */
-            <div className="flex items-center gap-[3px]">
-              <span className="w-[2px] h-3 bg-storm-red rounded-full animate-pulse" />
-              <span className="w-[2px] h-3 bg-storm-red rounded-full animate-pulse [animation-delay:0.15s]" />
-            </div>
-          ) : (
-            /* Play icon */
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="#E63946">
-              <path d="M2 1l9 5-9 5V1z" />
-            </svg>
-          )}
-        </motion.button>
+        <div className="fixed bottom-6 left-6 z-[90]">
+          <AnimatePresence mode="wait">
+            {!expanded ? (
+              /* ===== Collapsed: small circle ===== */
+              <motion.button
+                key="collapsed"
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                onClick={() => setExpanded(true)}
+                className="w-10 h-10 rounded-full bg-storm-dark/90 backdrop-blur-xl border border-white/10 flex items-center justify-center hover:border-storm-red/40 transition-all duration-300 group shadow-lg shadow-black/30"
+                aria-label="Open music controller"
+              >
+                {playing ? (
+                  /* Animated equalizer bars */
+                  <div className="flex items-end gap-[2px] h-3.5">
+                    <span className="w-[2.5px] rounded-full bg-storm-red animate-[eq1_0.8s_ease-in-out_infinite]" style={{ height: "60%" }} />
+                    <span className="w-[2.5px] rounded-full bg-storm-red animate-[eq2_0.7s_ease-in-out_infinite]" style={{ height: "100%" }} />
+                    <span className="w-[2.5px] rounded-full bg-storm-red animate-[eq3_0.9s_ease-in-out_infinite]" style={{ height: "40%" }} />
+                  </div>
+                ) : (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E63946" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 18V5l12-2v13" />
+                    <circle cx="6" cy="18" r="3" />
+                    <circle cx="18" cy="16" r="3" />
+                  </svg>
+                )}
+              </motion.button>
+            ) : (
+              /* ===== Expanded: pill controller ===== */
+              <motion.div
+                key="expanded"
+                initial={{ opacity: 0, width: 40, borderRadius: 20 }}
+                animate={{ opacity: 1, width: 220, borderRadius: 16 }}
+                exit={{ opacity: 0, width: 40, borderRadius: 20 }}
+                transition={{ type: "spring", stiffness: 350, damping: 28 }}
+                className="bg-storm-dark/95 backdrop-blur-xl border border-white/10 shadow-xl shadow-black/40 overflow-hidden"
+                style={{ borderRadius: 16 }}
+              >
+                <div className="p-3">
+                  {/* Top row: track name + collapse */}
+                  <div className="flex items-center justify-between mb-2.5">
+                    <div className="flex-1 overflow-hidden mr-2">
+                      <p className="text-[10px] tracking-widest uppercase text-storm-red font-medium truncate">
+                        Now Playing
+                      </p>
+                      <p className="text-xs text-storm-light truncate">
+                        {MUSIC_TRACKS[currentTrack].title}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setExpanded(false)}
+                      className="w-5 h-5 rounded-full flex items-center justify-center text-storm-muted hover:text-storm-light transition-colors shrink-0"
+                      aria-label="Collapse"
+                    >
+                      <svg width="10" height="10" viewBox="0 0 10 10" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round">
+                        <path d="M2 3.5L5 6.5L8 3.5" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Controls row: prev, play/pause, next */}
+                  <div className="flex items-center justify-center gap-3 mb-2.5">
+                    {/* Prev */}
+                    <button
+                      onClick={prevTrack}
+                      className="text-storm-muted hover:text-storm-light transition-colors"
+                      aria-label="Previous track"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+                      </svg>
+                    </button>
+
+                    {/* Play / Pause */}
+                    <button
+                      onClick={togglePlay}
+                      className="w-8 h-8 rounded-full bg-storm-red/20 hover:bg-storm-red/30 flex items-center justify-center transition-all"
+                      aria-label={playing ? "Pause" : "Play"}
+                    >
+                      {playing ? (
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="#E63946">
+                          <rect x="2" y="1" width="3" height="10" rx="0.5" />
+                          <rect x="7" y="1" width="3" height="10" rx="0.5" />
+                        </svg>
+                      ) : (
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="#E63946">
+                          <path d="M3 1l8 5-8 5V1z" />
+                        </svg>
+                      )}
+                    </button>
+
+                    {/* Next */}
+                    <button
+                      onClick={nextTrack}
+                      className="text-storm-muted hover:text-storm-light transition-colors"
+                      aria-label="Next track"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Volume slider */}
+                  <div className="flex items-center gap-2">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                      <path d="M11 5L6 9H2v6h4l5 4V5z" />
+                      {volume > 0 && <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />}
+                      {volume > 50 && <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />}
+                    </svg>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={volume}
+                      onChange={handleVolume}
+                      className="w-full h-1 appearance-none bg-storm-gray rounded-full outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-2.5 [&::-webkit-slider-thumb]:h-2.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-storm-red [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-2.5 [&::-moz-range-thumb]:h-2.5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-storm-red [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:cursor-pointer"
+                      style={{
+                        background: `linear-gradient(to right, #E63946 ${volume}%, #1A1A1A ${volume}%)`,
+                      }}
+                    />
+                    <span className="text-[9px] text-storm-muted w-6 text-right shrink-0">
+                      {volume}
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       )}
     </>
   );

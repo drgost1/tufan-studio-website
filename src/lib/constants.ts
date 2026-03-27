@@ -84,7 +84,7 @@ export const TEAM_MEMBERS = [
     name: "Nafis Iqbal",
     username: "DRgost1",
     aka: "Obai ZORO",
-    role: "Founder & Lead Developer",
+    role: "Founder",
     tags: ["Full-Stack Developer", "Animator", "Administrator"],
   },
   {
