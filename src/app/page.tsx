@@ -3,7 +3,6 @@
 import LoadingScreen from "@/components/LoadingScreen";
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
-import Marquee from "@/components/Marquee";
 import Services from "@/components/Services";
 import Portfolio from "@/components/Portfolio";
 import About from "@/components/About";
@@ -27,10 +26,8 @@ export default function Home() {
       <Navigation />
       <main className="scroll-container">
         <Hero />
-        <Marquee />
         <Services />
         <Portfolio />
-        <Marquee />
         <About />
         <Team />
         <Contact />

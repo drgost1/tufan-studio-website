@@ -61,96 +61,123 @@ function getFormationTargets(
     const t = i / count;
     const angle = t * Math.PI * 2;
 
+    // All formations use `T` (time) for continuous animation
+    const T = time * 0.01;
+
     switch (formation) {
       case "vortex": {
-        const r = 40 + t * scale * 0.35;
-        const a = angle * 3 + time * 0.001;
+        // Spiraling with breathing radius
+        const r = (40 + t * scale * 0.3) + Math.sin(T + i * 0.1) * 15;
+        const a = angle * 3 + T * 0.3 + Math.sin(T * 0.5) * 0.5;
         targets.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]);
         break;
       }
       case "explosion": {
-        const r = 50 + t * scale * 0.45;
-        targets.push([cx + Math.cos(angle) * r, cy + Math.sin(angle) * r]);
+        // Pulsing outward and inward like breathing
+        const breathe = Math.sin(T * 0.8) * 0.3 + 1;
+        const r = (50 + t * scale * 0.35) * breathe;
+        const a = angle + Math.sin(T * 0.3 + i * 0.05) * 0.15;
+        targets.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]);
         break;
       }
       case "rain": {
-        const x = (i % 40) * (w / 40) + 10;
-        const y = ((i * 37) % h);
+        // Falling rain with horizontal sway
+        const x = (i % 40) * (w / 40) + Math.sin(T + i * 0.3) * 15;
+        const y = ((i * 37 + time * 1.5) % (h + 50)) - 25;
         targets.push([x, y]);
         break;
       }
       case "wave": {
-        const x = t * w;
-        const y = cy + Math.sin(t * Math.PI * 4 + time * 0.002) * scale * 0.15;
+        // Double wave with traveling motion
+        const x = ((t * w + time * 0.8) % (w + 50)) - 25;
+        const y = cy + Math.sin(t * Math.PI * 4 + T * 0.6) * scale * 0.15
+          + Math.cos(t * Math.PI * 2 + T * 0.3) * scale * 0.05;
         targets.push([x, y]);
         break;
       }
       case "converge": {
-        const r = 5 + Math.random() * 30;
-        const a = Math.random() * Math.PI * 2;
-        targets.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]);
+        // Orbiting tight cluster
+        const cr = 15 + Math.sin(T * 2 + i * 0.5) * 25;
+        const ca = angle + T * 0.5;
+        targets.push([cx + Math.cos(ca) * cr, cy + Math.sin(ca) * cr]);
         break;
       }
       case "helix": {
-        const x = cx + Math.cos(t * Math.PI * 6) * scale * 0.12;
-        const y = t * h;
-        targets.push([x, y]);
+        // Rotating double helix
+        const hx = cx + Math.cos(t * Math.PI * 6 + T * 0.4) * scale * 0.12;
+        const hy = ((t * h + time * 0.5) % (h + 50)) - 25;
+        targets.push([hx, hy]);
         break;
       }
       case "grid": {
+        // Breathing grid with wave distortion
         const cols = Math.ceil(Math.sqrt(count * (w / h)));
         const rows = Math.ceil(count / cols);
         const col = i % cols;
         const row = Math.floor(i / cols);
-        const gx = (col / cols) * w * 0.7 + w * 0.15;
-        const gy = (row / rows) * h * 0.7 + h * 0.15;
+        const gx = (col / cols) * w * 0.7 + w * 0.15 + Math.sin(T * 0.5 + row * 0.3) * 12;
+        const gy = (row / rows) * h * 0.7 + h * 0.15 + Math.cos(T * 0.4 + col * 0.3) * 12;
         targets.push([gx, gy]);
         break;
       }
       case "ring": {
-        const r = scale * 0.25;
-        targets.push([cx + Math.cos(angle) * r, cy + Math.sin(angle) * r]);
+        // Rotating ring that breathes
+        const rr = scale * 0.22 + Math.sin(T * 0.6 + i * 0.1) * 20;
+        const ra = angle + T * 0.2;
+        targets.push([cx + Math.cos(ra) * rr, cy + Math.sin(ra) * rr]);
         break;
       }
       case "fountain": {
-        const spread = (Math.random() - 0.5) * scale * 0.4;
-        const height = Math.random() * h * 0.7;
-        targets.push([cx + spread, h - height]);
+        // Erupting upward and falling
+        const age = (time * 0.02 + i * 0.15) % 4;
+        const fx = cx + Math.sin(i * 2.4) * age * scale * 0.08;
+        const fy = cy + scale * 0.3 - age * scale * 0.2 + age * age * scale * 0.03;
+        targets.push([fx, fy]);
         break;
       }
       case "scatter": {
-        targets.push([Math.random() * w, Math.random() * h]);
+        // Drifting scatter — slowly orbiting random positions
+        const sx = (Math.sin(i * 7.3 + T * 0.1) * 0.5 + 0.5) * w;
+        const sy = (Math.cos(i * 5.7 + T * 0.08) * 0.5 + 0.5) * h;
+        targets.push([sx, sy]);
         break;
       }
       case "tornado": {
-        const r2 = (1 - t) * scale * 0.3 + 10;
-        const a2 = t * Math.PI * 8;
-        const y2 = t * h;
-        targets.push([cx + Math.cos(a2) * r2, y2]);
+        // Spinning tornado climbing up
+        const tr = ((1 - t) * scale * 0.25 + 10) + Math.sin(T + i * 0.2) * 10;
+        const ta = t * Math.PI * 8 + T * 0.5;
+        const ty = ((t * h + time * 0.3) % (h + 50)) - 25;
+        targets.push([cx + Math.cos(ta) * tr, ty]);
         break;
       }
       case "galaxy": {
+        // Rotating spiral arms
         const arm = i % 3;
         const armAngle = (arm / 3) * Math.PI * 2;
-        const r3 = t * scale * 0.35;
-        const spiral = armAngle + t * Math.PI * 3;
-        targets.push([cx + Math.cos(spiral) * r3, cy + Math.sin(spiral) * r3 * 0.6]);
+        const gr = t * scale * 0.32 + Math.sin(T * 0.3 + i * 0.1) * 10;
+        const gs = armAngle + t * Math.PI * 3 + T * 0.15;
+        targets.push([cx + Math.cos(gs) * gr, cy + Math.sin(gs) * gr * 0.6]);
         break;
       }
       case "pulse": {
-        const r4 = scale * 0.15 + Math.sin(t * Math.PI * 8) * scale * 0.1;
-        targets.push([cx + Math.cos(angle) * r4, cy + Math.sin(angle) * r4]);
+        // Pulsating rings expanding and contracting
+        const pr = scale * 0.15 + Math.sin(T * 1.2 + t * Math.PI * 6) * scale * 0.12;
+        const pa = angle + Math.sin(T * 0.3) * 0.3;
+        targets.push([cx + Math.cos(pa) * pr, cy + Math.sin(pa) * pr]);
         break;
       }
       case "zigzag": {
-        const x2 = t * w;
-        const zigHeight = ((Math.floor(t * 20) % 2) === 0 ? 1 : -1) * scale * 0.1;
-        targets.push([x2, cy + zigHeight]);
+        // Traveling zigzag with vertical bounce
+        const zx = ((t * w + time * 0.6) % (w + 50)) - 25;
+        const zigAmp = scale * 0.1 + Math.sin(T * 0.5) * scale * 0.04;
+        const zigH = ((Math.floor(t * 20) % 2) === 0 ? 1 : -1) * zigAmp;
+        targets.push([zx, cy + zigH]);
         break;
       }
       case "diamond": {
-        const dSize = scale * 0.25;
-        const dt = t * 4;
+        // Rotating diamond that scales
+        const dSize = scale * 0.2 + Math.sin(T * 0.7) * scale * 0.05;
+        const dt = (t + T * 0.05) * 4;
         const seg = Math.floor(dt) % 4;
         const segT = dt - Math.floor(dt);
         let dx = 0, dy = 0;
@@ -158,45 +185,56 @@ function getFormationTargets(
         else if (seg === 1) { dx = (1 - segT) * dSize; dy = -(1 - segT) * dSize + segT * dSize; }
         else if (seg === 2) { dx = -segT * dSize; dy = (1 - segT) * dSize; }
         else { dx = -(1 - segT) * dSize; dy = -(segT) * dSize; }
-        targets.push([cx + dx, cy + dy]);
+        const rot = T * 0.2;
+        targets.push([cx + dx * Math.cos(rot) - dy * Math.sin(rot), cy + dx * Math.sin(rot) + dy * Math.cos(rot)]);
         break;
       }
       case "infinity": {
-        const infT = t * Math.PI * 2;
-        const infScale = scale * 0.2;
-        const ix = infScale * Math.cos(infT) / (1 + Math.sin(infT) * Math.sin(infT));
-        const iy = infScale * Math.sin(infT) * Math.cos(infT) / (1 + Math.sin(infT) * Math.sin(infT));
+        // Flowing figure-eight
+        const infT = t * Math.PI * 2 + T * 0.3;
+        const infS = scale * 0.2 + Math.sin(T * 0.5) * scale * 0.03;
+        const ix = infS * Math.cos(infT) / (1 + Math.sin(infT) * Math.sin(infT));
+        const iy = infS * Math.sin(infT) * Math.cos(infT) / (1 + Math.sin(infT) * Math.sin(infT));
         targets.push([cx + ix, cy + iy]);
         break;
       }
       case "heartbeat": {
+        // Beating heart — scales up and down
+        const beat = 1 + Math.sin(T * 3) * 0.15;
         const ht = angle;
-        const hx = 16 * Math.pow(Math.sin(ht), 3);
-        const hy = -(13 * Math.cos(ht) - 5 * Math.cos(2 * ht) - 2 * Math.cos(3 * ht) - Math.cos(4 * ht));
+        const hx = 16 * Math.pow(Math.sin(ht), 3) * beat;
+        const hy = -(13 * Math.cos(ht) - 5 * Math.cos(2 * ht) - 2 * Math.cos(3 * ht) - Math.cos(4 * ht)) * beat;
         const hScale = scale * 0.012;
         targets.push([cx + hx * hScale, cy + hy * hScale - scale * 0.05]);
         break;
       }
       case "matrix": {
+        // Falling columns at varying speeds
         const cols2 = 30;
         const col2 = i % cols2;
-        const x3 = (col2 / cols2) * w;
-        const y3 = ((i * 73 + time * 0.5) % (h + 100)) - 50;
+        const speed = 0.5 + (col2 % 5) * 0.3;
+        const x3 = (col2 / cols2) * w + Math.sin(T * 0.2 + col2) * 5;
+        const y3 = ((i * 73 + time * speed) % (h + 100)) - 50;
         targets.push([x3, y3]);
         break;
       }
       case "orbit": {
-        const orbitR = (((i % 5) + 1) / 5) * scale * 0.3;
-        const orbitA = angle + (i % 5) * 0.5;
+        // Multiple orbiting rings at different speeds
+        const ring = i % 5;
+        const orbitR = ((ring + 1) / 5) * scale * 0.28 + Math.sin(T * 0.4 + ring) * 10;
+        const orbitSpeed = 0.1 + ring * 0.08;
+        const orbitA = angle + T * orbitSpeed;
         targets.push([cx + Math.cos(orbitA) * orbitR, cy + Math.sin(orbitA) * orbitR * 0.5]);
         break;
       }
       case "phoenix": {
-        // Wing shape
+        // Flapping wings
         const side = i < count / 2 ? -1 : 1;
         const lt = (i % (count / 2)) / (count / 2);
-        const wingX = side * lt * scale * 0.35;
-        const wingY = -Math.abs(wingX) * 0.4 + lt * scale * 0.1;
+        const flap = Math.sin(T * 1.5) * 0.3;
+        const wingX = side * lt * scale * 0.32;
+        const wingY = (-Math.abs(wingX) * (0.4 + flap)) + lt * scale * 0.08
+          + Math.sin(T * 0.8 + lt * 3) * 8;
         targets.push([cx + wingX, cy + wingY]);
         break;
       }

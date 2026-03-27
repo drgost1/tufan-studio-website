@@ -6,7 +6,7 @@ import gsap from "gsap";
 import ParticleCanvas from "./ParticleCanvas";
 import KitsuneLogo from "./KitsuneLogo";
 import { BRAND } from "@/lib/constants";
-import { DiamondIcon } from "./Icons";
+import Marquee from "./Marquee";
 
 export default function Hero() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -130,10 +130,9 @@ export default function Hero() {
         />
       </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 scroll-indicator">
-        <span className="text-xs tracking-[0.3em] uppercase text-storm-muted">Scroll</span>
-        <DiamondIcon className="text-storm-red w-3 h-3" />
+      {/* Marquee at bottom */}
+      <div className="absolute bottom-0 left-0 right-0 z-10">
+        <Marquee />
       </div>
     </section>
   );
