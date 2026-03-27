@@ -94,6 +94,13 @@ export const TEAM_MEMBERS = [
     role: "Co-Founder",
     tags: ["3D Modeler / 3D Artist", "Video Editor", "Administrator"],
   },
+  {
+    name: "Foysal Ahmed",
+    username: ".bugfire",
+    aka: "Mukhosh",
+    role: "Owner",
+    tags: ["Level Designer"],
+  },
 ] as const;
 
 export const STATS = [
