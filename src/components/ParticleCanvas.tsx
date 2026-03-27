@@ -5,16 +5,204 @@ import { useEffect, useRef, useCallback } from "react";
 interface Particle {
   x: number;
   y: number;
+  targetX: number;
+  targetY: number;
   size: number;
   color: string;
   alpha: number;
   vx: number;
   vy: number;
-  angle: number;
-  radius: number;
-  speed: number;
-  drift: number;
   life: number;
+  baseSize: number;
+}
+
+type Formation =
+  | "vortex"
+  | "explosion"
+  | "rain"
+  | "wave"
+  | "converge"
+  | "helix"
+  | "grid"
+  | "ring"
+  | "fountain"
+  | "scatter"
+  | "tornado"
+  | "galaxy"
+  | "pulse"
+  | "zigzag"
+  | "diamond"
+  | "infinity"
+  | "heartbeat"
+  | "matrix"
+  | "orbit"
+  | "phoenix";
+
+const FORMATIONS: Formation[] = [
+  "vortex", "explosion", "rain", "wave", "converge", "helix",
+  "grid", "ring", "fountain", "scatter", "tornado", "galaxy",
+  "pulse", "zigzag", "diamond", "infinity", "heartbeat", "matrix",
+  "orbit", "phoenix",
+];
+
+function getFormationTargets(
+  formation: Formation,
+  count: number,
+  w: number,
+  h: number,
+  time: number
+): [number, number][] {
+  const cx = w / 2;
+  const cy = h / 2;
+  const scale = Math.min(w, h);
+  const targets: [number, number][] = [];
+
+  for (let i = 0; i < count; i++) {
+    const t = i / count;
+    const angle = t * Math.PI * 2;
+
+    switch (formation) {
+      case "vortex": {
+        const r = 40 + t * scale * 0.35;
+        const a = angle * 3 + time * 0.001;
+        targets.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]);
+        break;
+      }
+      case "explosion": {
+        const r = 50 + t * scale * 0.45;
+        targets.push([cx + Math.cos(angle) * r, cy + Math.sin(angle) * r]);
+        break;
+      }
+      case "rain": {
+        const x = (i % 40) * (w / 40) + 10;
+        const y = ((i * 37) % h);
+        targets.push([x, y]);
+        break;
+      }
+      case "wave": {
+        const x = t * w;
+        const y = cy + Math.sin(t * Math.PI * 4 + time * 0.002) * scale * 0.15;
+        targets.push([x, y]);
+        break;
+      }
+      case "converge": {
+        const r = 5 + Math.random() * 30;
+        const a = Math.random() * Math.PI * 2;
+        targets.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]);
+        break;
+      }
+      case "helix": {
+        const x = cx + Math.cos(t * Math.PI * 6) * scale * 0.12;
+        const y = t * h;
+        targets.push([x, y]);
+        break;
+      }
+      case "grid": {
+        const cols = Math.ceil(Math.sqrt(count * (w / h)));
+        const rows = Math.ceil(count / cols);
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+        const gx = (col / cols) * w * 0.7 + w * 0.15;
+        const gy = (row / rows) * h * 0.7 + h * 0.15;
+        targets.push([gx, gy]);
+        break;
+      }
+      case "ring": {
+        const r = scale * 0.25;
+        targets.push([cx + Math.cos(angle) * r, cy + Math.sin(angle) * r]);
+        break;
+      }
+      case "fountain": {
+        const spread = (Math.random() - 0.5) * scale * 0.4;
+        const height = Math.random() * h * 0.7;
+        targets.push([cx + spread, h - height]);
+        break;
+      }
+      case "scatter": {
+        targets.push([Math.random() * w, Math.random() * h]);
+        break;
+      }
+      case "tornado": {
+        const r2 = (1 - t) * scale * 0.3 + 10;
+        const a2 = t * Math.PI * 8;
+        const y2 = t * h;
+        targets.push([cx + Math.cos(a2) * r2, y2]);
+        break;
+      }
+      case "galaxy": {
+        const arm = i % 3;
+        const armAngle = (arm / 3) * Math.PI * 2;
+        const r3 = t * scale * 0.35;
+        const spiral = armAngle + t * Math.PI * 3;
+        targets.push([cx + Math.cos(spiral) * r3, cy + Math.sin(spiral) * r3 * 0.6]);
+        break;
+      }
+      case "pulse": {
+        const r4 = scale * 0.15 + Math.sin(t * Math.PI * 8) * scale * 0.1;
+        targets.push([cx + Math.cos(angle) * r4, cy + Math.sin(angle) * r4]);
+        break;
+      }
+      case "zigzag": {
+        const x2 = t * w;
+        const zigHeight = ((Math.floor(t * 20) % 2) === 0 ? 1 : -1) * scale * 0.1;
+        targets.push([x2, cy + zigHeight]);
+        break;
+      }
+      case "diamond": {
+        const dSize = scale * 0.25;
+        const dt = t * 4;
+        const seg = Math.floor(dt) % 4;
+        const segT = dt - Math.floor(dt);
+        let dx = 0, dy = 0;
+        if (seg === 0) { dx = segT * dSize; dy = -segT * dSize; }
+        else if (seg === 1) { dx = (1 - segT) * dSize; dy = -(1 - segT) * dSize + segT * dSize; }
+        else if (seg === 2) { dx = -segT * dSize; dy = (1 - segT) * dSize; }
+        else { dx = -(1 - segT) * dSize; dy = -(segT) * dSize; }
+        targets.push([cx + dx, cy + dy]);
+        break;
+      }
+      case "infinity": {
+        const infT = t * Math.PI * 2;
+        const infScale = scale * 0.2;
+        const ix = infScale * Math.cos(infT) / (1 + Math.sin(infT) * Math.sin(infT));
+        const iy = infScale * Math.sin(infT) * Math.cos(infT) / (1 + Math.sin(infT) * Math.sin(infT));
+        targets.push([cx + ix, cy + iy]);
+        break;
+      }
+      case "heartbeat": {
+        const ht = angle;
+        const hx = 16 * Math.pow(Math.sin(ht), 3);
+        const hy = -(13 * Math.cos(ht) - 5 * Math.cos(2 * ht) - 2 * Math.cos(3 * ht) - Math.cos(4 * ht));
+        const hScale = scale * 0.012;
+        targets.push([cx + hx * hScale, cy + hy * hScale - scale * 0.05]);
+        break;
+      }
+      case "matrix": {
+        const cols2 = 30;
+        const col2 = i % cols2;
+        const x3 = (col2 / cols2) * w;
+        const y3 = ((i * 73 + time * 0.5) % (h + 100)) - 50;
+        targets.push([x3, y3]);
+        break;
+      }
+      case "orbit": {
+        const orbitR = (((i % 5) + 1) / 5) * scale * 0.3;
+        const orbitA = angle + (i % 5) * 0.5;
+        targets.push([cx + Math.cos(orbitA) * orbitR, cy + Math.sin(orbitA) * orbitR * 0.5]);
+        break;
+      }
+      case "phoenix": {
+        // Wing shape
+        const side = i < count / 2 ? -1 : 1;
+        const lt = (i % (count / 2)) / (count / 2);
+        const wingX = side * lt * scale * 0.35;
+        const wingY = -Math.abs(wingX) * 0.4 + lt * scale * 0.1;
+        targets.push([cx + wingX, cy + wingY]);
+        break;
+      }
+    }
+  }
+  return targets;
 }
 
 export default function ParticleCanvas() {
@@ -24,50 +212,29 @@ export default function ParticleCanvas() {
   const animFrameRef = useRef<number>(0);
   const visibleRef = useRef(true);
   const timeRef = useRef(0);
+  const formationRef = useRef<Formation>("vortex");
+  const formationTimer = useRef(0);
+  const transitionSpeed = useRef(0.02);
+
+  const PARTICLE_COUNT = 220;
 
   const initParticles = useCallback((width: number, height: number) => {
-    const cx = width / 2;
-    const cy = height / 2;
     const particles: Particle[] = [];
-
-    // Vortex particles — spiraling storm
-    for (let i = 0; i < 250; i++) {
-      const angle = Math.random() * Math.PI * 2;
-      const radius = 30 + Math.random() * Math.min(width, height) * 0.4;
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      const x = Math.random() * width;
+      const y = Math.random() * height;
       particles.push({
-        x: cx + Math.cos(angle) * radius,
-        y: cy + Math.sin(angle) * radius,
+        x, y,
+        targetX: x,
+        targetY: y,
         size: Math.random() * 2 + 0.5,
-        color: Math.random() > 0.25 ? "#E63946" : "#FAFAFA",
+        baseSize: Math.random() * 2 + 0.5,
+        color: Math.random() > 0.3 ? "#E63946" : "#FAFAFA",
         alpha: Math.random() * 0.6 + 0.2,
-        vx: 0,
-        vy: 0,
-        angle,
-        radius,
-        speed: 0.002 + Math.random() * 0.004,
-        drift: (Math.random() - 0.5) * 0.3,
+        vx: 0, vy: 0,
         life: Math.random() * 1000,
       });
     }
-
-    // Ember particles — small bright dots drifting upward
-    for (let i = 0; i < 60; i++) {
-      particles.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        size: Math.random() * 1.2 + 0.3,
-        color: i % 3 === 0 ? "#FF6B6B" : "rgba(230,57,70,0.5)",
-        alpha: Math.random() * 0.4 + 0.1,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: -(Math.random() * 0.5 + 0.1),
-        angle: 0,
-        radius: 0,
-        speed: 0,
-        drift: Math.random() * 2,
-        life: Math.random() * 500,
-      });
-    }
-
     particlesRef.current = particles;
   }, []);
 
@@ -102,6 +269,18 @@ export default function ParticleCanvas() {
     );
     observer.observe(canvas);
 
+    const switchFormation = () => {
+      const current = formationRef.current;
+      let next: Formation;
+      do {
+        next = FORMATIONS[Math.floor(Math.random() * FORMATIONS.length)];
+      } while (next === current);
+      formationRef.current = next;
+
+      // Vary transition speed for different feels
+      transitionSpeed.current = 0.015 + Math.random() * 0.03;
+    };
+
     const animate = () => {
       if (!visibleRef.current) {
         animFrameRef.current = 0;
@@ -110,37 +289,40 @@ export default function ParticleCanvas() {
 
       const w = canvas.width;
       const h = canvas.height;
-      const cx = w / 2;
-      const cy = h / 2;
 
       ctx.clearRect(0, 0, w, h);
       timeRef.current++;
+      formationTimer.current++;
+
+      // Switch formation every 4-7 seconds (240-420 frames)
+      if (formationTimer.current > 240 + Math.random() * 180) {
+        switchFormation();
+        formationTimer.current = 0;
+      }
 
       const particles = particlesRef.current;
+      const targets = getFormationTargets(
+        formationRef.current,
+        particles.length,
+        w, h,
+        timeRef.current
+      );
       const mx = mouseRef.current.x;
       const my = mouseRef.current.y;
+      const speed = transitionSpeed.current;
 
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
 
-        if (p.speed > 0) {
-          // Vortex particle — orbit around center
-          p.angle += p.speed;
-          // Slowly pulse radius
-          const pulseRadius = p.radius + Math.sin(timeRef.current * 0.005 + p.drift * 10) * 20;
-          const targetX = cx + Math.cos(p.angle) * pulseRadius;
-          const targetY = cy + Math.sin(p.angle) * pulseRadius;
-          p.x += (targetX - p.x) * 0.05;
-          p.y += (targetY - p.y) * 0.05;
-        } else {
-          // Ember particle — drift upward
-          p.x += p.vx + Math.sin(timeRef.current * 0.01 + p.drift * 5) * 0.2;
-          p.y += p.vy;
-          // Wrap around
-          if (p.y < -10) { p.y = h + 10; p.x = Math.random() * w; }
-          if (p.x < -10) p.x = w + 10;
-          if (p.x > w + 10) p.x = -10;
+        // Update targets
+        if (targets[i]) {
+          p.targetX = targets[i][0];
+          p.targetY = targets[i][1];
         }
+
+        // Move toward target with easing
+        p.vx += (p.targetX - p.x) * speed;
+        p.vy += (p.targetY - p.y) * speed;
 
         // Mouse repulsion
         const dx = mx - p.x;
@@ -148,42 +330,63 @@ export default function ParticleCanvas() {
         const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist > 0 && dist < 150) {
           const force = (150 - dist) / 150;
-          p.x -= (dx / dist) * force * 3;
-          p.y -= (dy / dist) * force * 3;
+          p.vx -= (dx / dist) * force * 4;
+          p.vy -= (dy / dist) * force * 4;
         }
+
+        // Damping
+        p.vx *= 0.92;
+        p.vy *= 0.92;
+
+        p.x += p.vx;
+        p.y += p.vy;
 
         // Flicker
         p.life++;
-        const flicker = 0.7 + 0.3 * Math.sin(p.life * 0.04 + p.drift * 8);
+        const flicker = 0.6 + 0.4 * Math.sin(p.life * 0.03 + i * 0.5);
 
-        // Draw with glow
+        // Size pulse during transitions
+        const velocity = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+        p.size = p.baseSize + Math.min(velocity * 0.3, 2);
+
+        // Draw particle
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fillStyle = p.color;
         ctx.globalAlpha = p.alpha * flicker;
         ctx.fill();
 
-        // Glow for larger particles
-        if (p.size > 1.2) {
+        // Glow for moving particles
+        if (velocity > 1) {
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
           ctx.fillStyle = p.color;
-          ctx.globalAlpha = p.alpha * flicker * 0.08;
+          ctx.globalAlpha = p.alpha * flicker * 0.06;
           ctx.fill();
+        }
+
+        // Motion trail
+        if (velocity > 2) {
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(p.x - p.vx * 3, p.y - p.vy * 3);
+          ctx.strokeStyle = p.color;
+          ctx.globalAlpha = p.alpha * 0.15;
+          ctx.lineWidth = p.size * 0.5;
+          ctx.stroke();
         }
       }
 
-      // Draw faint vortex lines connecting nearby particles
-      ctx.strokeStyle = "rgba(230, 57, 70, 0.03)";
-      ctx.lineWidth = 0.5;
-      ctx.globalAlpha = 1;
-      for (let i = 0; i < Math.min(particles.length, 100); i++) {
-        for (let j = i + 1; j < Math.min(particles.length, 100); j++) {
+      // Connect nearby particles with lines
+      ctx.lineWidth = 0.4;
+      for (let i = 0; i < particles.length; i += 2) {
+        for (let j = i + 2; j < particles.length; j += 2) {
           const a = particles[i];
           const b = particles[j];
           const d = Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
-          if (d < 80) {
-            ctx.globalAlpha = (1 - d / 80) * 0.15;
+          if (d < 60) {
+            ctx.globalAlpha = (1 - d / 60) * 0.1;
+            ctx.strokeStyle = "rgba(230, 57, 70, 0.4)";
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
