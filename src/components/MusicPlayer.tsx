@@ -7,6 +7,27 @@ const MUSIC_TRACKS = [
   { youtubeId: "k2qgadSvNyU", startAt: 12, title: "Track 1" },
 ];
 
+// Extend window for YouTube API
+declare global {
+  interface Window {
+    YT: typeof YT;
+    onYouTubeIframeAPIReady: () => void;
+  }
+}
+
+function loadYouTubeAPI(): Promise<void> {
+  return new Promise((resolve) => {
+    if (window.YT && window.YT.Player) {
+      resolve();
+      return;
+    }
+    window.onYouTubeIframeAPIReady = () => resolve();
+    const tag = document.createElement("script");
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(tag);
+  });
+}
+
 export default function MusicPlayer() {
   const [asked, setAsked] = useState(false);
   const [playing, setPlaying] = useState(false);
@@ -14,9 +35,8 @@ export default function MusicPlayer() {
   const [expanded, setExpanded] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(0);
   const [volume, setVolume] = useState(50);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  const playerReady = useRef(false);
-  const iframeSrc = useRef("");
+  const playerRef = useRef<YT.Player | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Show prompt after loading screen
   useEffect(() => {
@@ -31,34 +51,63 @@ export default function MusicPlayer() {
     return () => clearTimeout(timer);
   }, []);
 
-  const buildEmbedUrl = useCallback(
-    (trackIndex: number, autoplay: boolean) => {
-      const t = MUSIC_TRACKS[trackIndex];
-      return `https://www.youtube.com/embed/${t.youtubeId}?start=${t.startAt}&autoplay=${autoplay ? 1 : 0}&enablejsapi=1&loop=1&playlist=${t.youtubeId}&controls=0&showinfo=0&rel=0&modestbranding=1&origin=${typeof window !== "undefined" ? window.location.origin : ""}`;
+  const createPlayer = useCallback(
+    (trackIndex: number) => {
+      const track = MUSIC_TRACKS[trackIndex];
+
+      // Destroy existing player
+      if (playerRef.current) {
+        playerRef.current.destroy();
+        playerRef.current = null;
+      }
+
+      // Create fresh div for the player
+      if (containerRef.current) {
+        containerRef.current.innerHTML = "";
+        const div = document.createElement("div");
+        div.id = "yt-music-player";
+        containerRef.current.appendChild(div);
+      }
+
+      playerRef.current = new window.YT.Player("yt-music-player", {
+        height: "1",
+        width: "1",
+        videoId: track.youtubeId,
+        playerVars: {
+          autoplay: 1,
+          start: track.startAt,
+          loop: 1,
+          playlist: track.youtubeId,
+          controls: 0,
+          showinfo: 0,
+          modestbranding: 1,
+          rel: 0,
+          playsinline: 1,
+        },
+        events: {
+          onReady: (event: YT.PlayerEvent) => {
+            event.target.setVolume(volume);
+            event.target.playVideo();
+          },
+        },
+      });
     },
-    []
+    [volume]
   );
 
-  const postCommand = useCallback(
-    (func: string, args?: Record<string, unknown>) => {
-      if (iframeRef.current?.contentWindow) {
-        const msg: Record<string, unknown> = { event: "command", func };
-        if (args) Object.assign(msg, args);
-        iframeRef.current.contentWindow.postMessage(
-          JSON.stringify(msg),
-          "https://www.youtube.com"
-        );
-      }
+  const startMusic = useCallback(
+    async (trackIndex: number) => {
+      await loadYouTubeAPI();
+      createPlayer(trackIndex);
     },
-    []
+    [createPlayer]
   );
 
   const handleAccept = () => {
     setShowPrompt(false);
     setAsked(true);
     setPlaying(true);
-    playerReady.current = true;
-    iframeSrc.current = buildEmbedUrl(0, true);
+    startMusic(0);
   };
 
   const handleDecline = () => {
@@ -68,53 +117,54 @@ export default function MusicPlayer() {
   };
 
   const togglePlay = () => {
-    if (!playerReady.current) {
-      playerReady.current = true;
-      iframeSrc.current = buildEmbedUrl(currentTrack, true);
+    if (!playerRef.current) {
       setPlaying(true);
+      startMusic(currentTrack);
       return;
     }
-    if (playing) {
-      postCommand("pauseVideo");
+    const state = playerRef.current.getPlayerState();
+    if (state === 1) {
+      // Playing -> pause
+      playerRef.current.pauseVideo();
+      setPlaying(false);
     } else {
-      postCommand("playVideo");
+      // Paused/other -> play
+      playerRef.current.playVideo();
+      setPlaying(true);
     }
-    setPlaying(!playing);
   };
 
   const nextTrack = () => {
     const next = (currentTrack + 1) % MUSIC_TRACKS.length;
     setCurrentTrack(next);
-    iframeSrc.current = buildEmbedUrl(next, true);
     setPlaying(true);
+    startMusic(next);
   };
 
   const prevTrack = () => {
-    const prev = (currentTrack - 1 + MUSIC_TRACKS.length) % MUSIC_TRACKS.length;
+    const prev =
+      (currentTrack - 1 + MUSIC_TRACKS.length) % MUSIC_TRACKS.length;
     setCurrentTrack(prev);
-    iframeSrc.current = buildEmbedUrl(prev, true);
     setPlaying(true);
+    startMusic(prev);
   };
 
   const handleVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = Number(e.target.value);
     setVolume(val);
-    postCommand("setVolume", { args: [val] });
+    if (playerRef.current) {
+      playerRef.current.setVolume(val);
+    }
   };
 
   return (
     <>
-      {/* Hidden YouTube iframe */}
-      {asked && iframeSrc.current && (
-        <iframe
-          ref={iframeRef}
-          key={iframeSrc.current}
-          src={iframeSrc.current}
-          className="fixed w-0 h-0 opacity-0 pointer-events-none"
-          allow="autoplay; encrypted-media"
-          title="Background Music"
-        />
-      )}
+      {/* Hidden container for YouTube player */}
+      <div
+        ref={containerRef}
+        className="fixed w-px h-px overflow-hidden opacity-0 pointer-events-none"
+        style={{ top: -9999, left: -9999 }}
+      />
 
       {/* Music prompt overlay */}
       <AnimatePresence>
@@ -169,7 +219,6 @@ export default function MusicPlayer() {
         <div className="fixed bottom-6 left-6 z-[90]">
           <AnimatePresence mode="wait">
             {!expanded ? (
-              /* ===== Collapsed: small circle ===== */
               <motion.button
                 key="collapsed"
                 initial={{ opacity: 0, scale: 0 }}
@@ -181,7 +230,6 @@ export default function MusicPlayer() {
                 aria-label="Open music controller"
               >
                 {playing ? (
-                  /* Animated equalizer bars */
                   <div className="flex items-end gap-[2px] h-3.5">
                     <span className="w-[2.5px] rounded-full bg-storm-red animate-[eq1_0.8s_ease-in-out_infinite]" style={{ height: "60%" }} />
                     <span className="w-[2.5px] rounded-full bg-storm-red animate-[eq2_0.7s_ease-in-out_infinite]" style={{ height: "100%" }} />
@@ -196,7 +244,6 @@ export default function MusicPlayer() {
                 )}
               </motion.button>
             ) : (
-              /* ===== Expanded: pill controller ===== */
               <motion.div
                 key="expanded"
                 initial={{ opacity: 0, width: 40, borderRadius: 20 }}
@@ -207,7 +254,7 @@ export default function MusicPlayer() {
                 style={{ borderRadius: 16 }}
               >
                 <div className="p-3">
-                  {/* Top row: track name + collapse */}
+                  {/* Top row */}
                   <div className="flex items-center justify-between mb-2.5">
                     <div className="flex-1 overflow-hidden mr-2">
                       <p className="text-[10px] tracking-widest uppercase text-storm-red font-medium truncate">
@@ -228,50 +275,24 @@ export default function MusicPlayer() {
                     </button>
                   </div>
 
-                  {/* Controls row: prev, play/pause, next */}
+                  {/* Controls */}
                   <div className="flex items-center justify-center gap-3 mb-2.5">
-                    {/* Prev */}
-                    <button
-                      onClick={prevTrack}
-                      className="text-storm-muted hover:text-storm-light transition-colors"
-                      aria-label="Previous track"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
-                      </svg>
+                    <button onClick={prevTrack} className="text-storm-muted hover:text-storm-light transition-colors" aria-label="Previous">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" /></svg>
                     </button>
-
-                    {/* Play / Pause */}
-                    <button
-                      onClick={togglePlay}
-                      className="w-8 h-8 rounded-full bg-storm-red/20 hover:bg-storm-red/30 flex items-center justify-center transition-all"
-                      aria-label={playing ? "Pause" : "Play"}
-                    >
+                    <button onClick={togglePlay} className="w-8 h-8 rounded-full bg-storm-red/20 hover:bg-storm-red/30 flex items-center justify-center transition-all" aria-label={playing ? "Pause" : "Play"}>
                       {playing ? (
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="#E63946">
-                          <rect x="2" y="1" width="3" height="10" rx="0.5" />
-                          <rect x="7" y="1" width="3" height="10" rx="0.5" />
-                        </svg>
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="#E63946"><rect x="2" y="1" width="3" height="10" rx="0.5" /><rect x="7" y="1" width="3" height="10" rx="0.5" /></svg>
                       ) : (
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="#E63946">
-                          <path d="M3 1l8 5-8 5V1z" />
-                        </svg>
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="#E63946"><path d="M3 1l8 5-8 5V1z" /></svg>
                       )}
                     </button>
-
-                    {/* Next */}
-                    <button
-                      onClick={nextTrack}
-                      className="text-storm-muted hover:text-storm-light transition-colors"
-                      aria-label="Next track"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
-                      </svg>
+                    <button onClick={nextTrack} className="text-storm-muted hover:text-storm-light transition-colors" aria-label="Next">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" /></svg>
                     </button>
                   </div>
 
-                  {/* Volume slider */}
+                  {/* Volume */}
                   <div className="flex items-center gap-2">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
                       <path d="M11 5L6 9H2v6h4l5 4V5z" />
@@ -284,14 +305,10 @@ export default function MusicPlayer() {
                       max="100"
                       value={volume}
                       onChange={handleVolume}
-                      className="w-full h-1 appearance-none bg-storm-gray rounded-full outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-2.5 [&::-webkit-slider-thumb]:h-2.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-storm-red [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-2.5 [&::-moz-range-thumb]:h-2.5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-storm-red [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:cursor-pointer"
-                      style={{
-                        background: `linear-gradient(to right, #E63946 ${volume}%, #1A1A1A ${volume}%)`,
-                      }}
+                      className="w-full h-1 appearance-none rounded-full outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-2.5 [&::-webkit-slider-thumb]:h-2.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-storm-red [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-2.5 [&::-moz-range-thumb]:h-2.5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-storm-red [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:cursor-pointer"
+                      style={{ background: `linear-gradient(to right, #E63946 ${volume}%, #1A1A1A ${volume}%)` }}
                     />
-                    <span className="text-[9px] text-storm-muted w-6 text-right shrink-0">
-                      {volume}
-                    </span>
+                    <span className="text-[9px] text-storm-muted w-6 text-right shrink-0">{volume}</span>
                   </div>
                 </div>
               </motion.div>
