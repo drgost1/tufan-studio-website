@@ -13,7 +13,7 @@ export default function MusicPlayer() {
   const [showPrompt, setShowPrompt] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(0);
-  const [volume, setVolume] = useState(50);
+  const [volume, setVolume] = useState(15);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {

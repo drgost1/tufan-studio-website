@@ -145,7 +145,7 @@ export default function About() {
             </h2>
 
             <p className="about-line text-lg text-storm-black/70 leading-relaxed mb-4">
-              {BRAND.name} isn&apos;t just a studio — it&apos;s a force. We craft games, cinematics, and digital experiences that hit different.
+              {BRAND.name}{" "}isn&apos;t just a studio — it&apos;s a force. We craft games, cinematics, and digital experiences that hit different.
             </p>
 
             <p className="about-line text-lg text-storm-black/70 leading-relaxed mb-4">

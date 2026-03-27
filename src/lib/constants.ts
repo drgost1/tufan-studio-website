@@ -101,6 +101,13 @@ export const TEAM_MEMBERS = [
     role: "Owner",
     tags: ["Level Designer", "Administrator"],
   },
+  {
+    name: "Md Shohanur Rahman",
+    username: "Qtnwte",
+    aka: "Reed",
+    role: "Creative Member",
+    tags: ["3D Modeler", "AI Artist"],
+  },
 ] as const;
 
 export const STATS = [
