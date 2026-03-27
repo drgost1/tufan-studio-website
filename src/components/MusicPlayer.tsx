@@ -70,8 +70,8 @@ export default function MusicPlayer() {
       }
 
       playerRef.current = new window.YT.Player("yt-music-player", {
-        height: "1",
-        width: "1",
+        height: "40",
+        width: "40",
         videoId: track.youtubeId,
         playerVars: {
           autoplay: 1,
@@ -159,11 +159,13 @@ export default function MusicPlayer() {
 
   return (
     <>
-      {/* Hidden container for YouTube player */}
+      {/* YouTube player container — positioned behind the music controller button
+          Must remain "visible" (not display:none, not opacity:0, not off-screen)
+          for browser autoplay policies to allow audio on remote domains */}
       <div
         ref={containerRef}
-        className="fixed w-px h-px overflow-hidden opacity-0 pointer-events-none"
-        style={{ top: -9999, left: -9999 }}
+        className="fixed bottom-6 left-6 w-10 h-10 overflow-hidden pointer-events-none"
+        style={{ zIndex: 89, clipPath: "inset(0 0 0 0)" }}
       />
 
       {/* Music prompt overlay */}
