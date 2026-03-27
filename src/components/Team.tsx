@@ -86,14 +86,14 @@ export default function Team() {
         {/* Team cards */}
         <div
           ref={cardsRef}
-          className="flex flex-wrap items-center justify-center gap-8"
+          className="flex flex-wrap items-stretch justify-center gap-8"
         >
           {TEAM_MEMBERS.map((member) => (
             <div
               key={member.name}
               className="team-card group relative"
             >
-              <div className="relative w-72 bg-storm-gray/50 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col items-center text-center transition-all duration-500 hover:border-storm-red/30 hover:shadow-[0_0_40px_rgba(230,57,70,0.1)]">
+              <div className="relative w-72 h-full bg-storm-gray/50 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col items-center text-center transition-all duration-500 hover:border-storm-red/30 hover:shadow-[0_0_40px_rgba(230,57,70,0.1)]">
                 {/* Avatar with kitsune frame */}
                 <div className="relative mb-6">
                   <div className="w-24 h-24 rounded-full bg-storm-dark flex items-center justify-center overflow-hidden border-2 border-storm-red/20 group-hover:border-storm-red/50 transition-colors duration-300">

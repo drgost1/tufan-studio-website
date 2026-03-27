@@ -99,7 +99,7 @@ export const TEAM_MEMBERS = [
     username: ".bugfire",
     aka: "Mukhosh",
     role: "Owner",
-    tags: ["Level Designer"],
+    tags: ["Level Designer", "Administrator"],
   },
 ] as const;
 
