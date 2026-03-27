@@ -61,6 +61,12 @@ export default function Hero() {
       id="hero"
       className="scroll-section flex flex-col items-center justify-center bg-storm-black relative"
     >
+      {/* Storm background image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center opacity-40"
+        style={{ backgroundImage: "url('/images/hero-bg.png')" }}
+      />
+
       {/* Particle background */}
       <ParticleCanvas />
 

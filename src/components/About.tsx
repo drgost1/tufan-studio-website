@@ -115,7 +115,7 @@ export default function About() {
               <div className="absolute inset-4 border-2 border-storm-red/20 rounded-2xl" />
               <div className="absolute inset-0 bg-gradient-to-br from-storm-red/5 to-transparent rounded-2xl" />
 
-              {/* Centered kitsune */}
+              {/* Centered logo */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <KitsuneLogo size={200} className="drop-shadow-2xl" />
               </div>

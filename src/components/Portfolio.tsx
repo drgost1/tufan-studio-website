@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { PORTFOLIO_ITEMS } from "@/lib/constants";
-import { DiamondIcon, ExternalLinkIcon, ServerIcon, CodeIcon, FilmIcon, CubeIcon } from "./Icons";
+import { DiamondIcon, ExternalLinkIcon } from "./Icons";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -183,37 +183,19 @@ export default function Portfolio() {
                 key={index}
                 className="portfolio-card relative w-[300px] sm:w-[400px] aspect-[16/10] rounded-2xl overflow-hidden group select-none"
               >
-                {/* Background */}
-                <div
-                  className={`absolute inset-0 ${
-                    item.comingSoon
-                      ? "bg-storm-gray"
-                      : "bg-gradient-to-br from-storm-gray to-storm-black"
-                  }`}
-                >
-                  {/* Glitch effect for coming soon */}
-                  {item.comingSoon && (
-                    <div className="absolute inset-0 overflow-hidden">
-                      <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(230,57,70,0.03)_2px,rgba(230,57,70,0.03)_4px)]" />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-20 h-20 border border-storm-red/20 rotate-45 animate-pulse" />
-                      </div>
-                    </div>
+                {/* Background image */}
+                <div className="absolute inset-0">
+                  {item.image && (
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
                   )}
-
-                  {/* Non-coming-soon: decorative pattern + icon */}
-                  {!item.comingSoon && (
-                    <div className="absolute inset-0">
-                      <div className="absolute inset-0 bg-gradient-to-t from-storm-black/95 via-storm-black/60 to-storm-dark z-10" />
-                      <div className="absolute inset-0 diamond-grid opacity-30" />
-                      {/* Category icon in the top area */}
-                      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[5] opacity-10 group-hover:opacity-20 transition-opacity duration-500">
-                        {item.category === "FiveM" && <ServerIcon className="w-24 h-24 text-storm-red" />}
-                        {item.category === "Cinematics" && <FilmIcon className="w-24 h-24 text-storm-red" />}
-                      </div>
-                      <div className="absolute inset-0 border border-storm-red/0 group-hover:border-storm-red/30 transition-all duration-500 rounded-2xl z-20" />
-                    </div>
-                  )}
+                  {/* Gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-storm-black via-storm-black/70 to-storm-black/20 z-10" />
+                  {/* Hover border glow */}
+                  <div className="absolute inset-0 border border-storm-red/0 group-hover:border-storm-red/30 transition-all duration-500 rounded-2xl z-20" />
                 </div>
 
                 {/* Content overlay */}

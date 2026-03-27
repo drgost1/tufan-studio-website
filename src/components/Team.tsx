@@ -61,7 +61,7 @@ export default function Team() {
       className="scroll-section flex flex-col items-center justify-center bg-storm-black relative py-20"
     >
       {/* Background pattern */}
-      <div className="absolute inset-0 diamond-grid opacity-50" />
+      <div className="absolute inset-0 bg-cover bg-center opacity-40" style={{ backgroundImage: "url('/images/team-bg.png')" }} />
       <div className="absolute inset-0 bg-gradient-to-b from-storm-black via-transparent to-storm-black" />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 w-full">

@@ -24,35 +24,63 @@ const body = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Tufan Studio | We Are The Storm",
+  metadataBase: new URL("http://217.217.253.236:6900"),
+  title: {
+    default: "Tufan Studio | We Are The Storm",
+    template: "%s | Tufan Studio",
+  },
   description:
-    "Game development, cinematics, graphic design, and digital experiences — crafted with the force of a storm. Tufan Studio builds games, manages FiveM servers, creates cinematics, and grows gaming communities.",
+    "Tufan Studio is a game development and digital services studio. We build FiveM servers, create GTA V-style cinematics, develop market-ready scripts, and craft high-end websites. We are the storm.",
   keywords: [
     "Tufan Studio",
     "game development",
-    "FiveM",
-    "Roblox",
-    "cinematics",
-    "graphic design",
+    "FiveM server",
+    "FiveM scripts",
+    "GTA V cinematics",
+    "Roblox game development",
+    "web development",
     "game server management",
     "gaming community",
+    "3D modeling",
+    "level design",
+    "graphic design",
+    "digital studio",
   ],
+  authors: [{ name: "Tufan Studio" }],
+  creator: "Tufan Studio",
+  publisher: "Tufan Studio",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
   icons: {
-    icon: "/favicon.png",
-    apple: "/favicon.png",
+    icon: "/logo.png",
+    apple: "/logo.png",
+    shortcut: "/logo.png",
   },
   openGraph: {
     title: "Tufan Studio | We Are The Storm",
     description:
-      "Game development, cinematics, and digital experiences crafted with storm-force intensity.",
+      "Game development, FiveM servers, GTA V cinematics, and web development — crafted with the force of a storm.",
     type: "website",
     siteName: "Tufan Studio",
+    locale: "en_US",
+    images: [
+      {
+        url: "/logo.png",
+        width: 512,
+        height: 512,
+        alt: "Tufan Studio - Kitsune Logo",
+      },
+    ],
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "Tufan Studio | We Are The Storm",
     description:
-      "Game development, cinematics, and digital experiences crafted with storm-force intensity.",
+      "Game development, FiveM servers, GTA V cinematics, and web development — crafted with the force of a storm.",
+    images: ["/logo.png"],
   },
 };
 
