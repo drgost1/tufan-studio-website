@@ -1,26 +1,396 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-storm-red: #E63946;
+  --color-storm-red-dark: #C1121F;
+  --color-storm-red-light: #FF6B6B;
+  --color-storm-black: #0A0A0A;
+  --color-storm-dark: #111111;
+  --color-storm-gray: #1A1A1A;
+  --color-storm-light: #FAFAFA;
+  --color-storm-muted: #888888;
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ======================== */
+/* FONTS                    */
+/* ======================== */
+
+h1, h2, h3, .font-heading {
+  font-family: var(--font-heading), "Bebas Neue", Impact, sans-serif;
+  letter-spacing: 0.04em;
+}
+
+/* ======================== */
+/* SCROLL SYSTEM            */
+/* ======================== */
+
+.scroll-container {
+  height: 100vh;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+}
+
+.scroll-section {
+  scroll-snap-align: start;
+  min-height: 100vh;
+  position: relative;
+  overflow: clip;
+}
+
+/* ======================== */
+/* NOISE TEXTURE OVERLAY    */
+/* ======================== */
+/* Adds film grain for premium depth */
+
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* ======================== */
+/* CUSTOM CURSOR (desktop)  */
+/* ======================== */
+
+@media (pointer: fine) {
+  body {
+    cursor: none;
+  }
+
+  a, button, [role="button"] {
+    cursor: none;
+  }
+
+  .custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 12px;
+    height: 12px;
+    background: #E63946;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99999;
+    transition: width 0.2s, height 0.2s, background 0.2s, transform 0.2s;
+    transform: translate(-50%, -50%);
+    mix-blend-mode: difference;
+  }
+
+  .custom-cursor.hovering {
+    width: 40px;
+    height: 40px;
+    background: rgba(230, 57, 70, 0.3);
+    border: 1.5px solid #E63946;
+  }
+
+  .custom-cursor-trail {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(230, 57, 70, 0.25);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99998;
+    transform: translate(-50%, -50%);
+    transition: all 0.15s ease-out;
   }
 }
 
+/* ======================== */
+/* SCROLL PROGRESS BAR      */
+/* ======================== */
+
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #E63946, #FF6B6B);
+  z-index: 9998;
+  transform-origin: left;
+  transition: transform 0.1s ease-out;
+}
+
+/* ======================== */
+/* SECTION TRANSITION BLEED */
+/* ======================== */
+
+.section-fade-top::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(to bottom, #0A0A0A, transparent);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.section-fade-bottom::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(to top, #0A0A0A, transparent);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* ======================== */
+/* TEXT REVEAL ANIMATION    */
+/* ======================== */
+
+.text-reveal {
+  overflow: hidden;
+  display: inline-block;
+}
+
+.text-reveal-inner {
+  display: inline-block;
+  transform: translateY(110%);
+}
+
+.text-reveal-inner.revealed {
+  transform: translateY(0);
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ======================== */
+/* GLASSMORPHISM CARD       */
+/* ======================== */
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(230, 57, 70, 0.3);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 60px rgba(230, 57, 70, 0.15);
+}
+
+/* ======================== */
+/* DIAMOND PATTERN BG       */
+/* ======================== */
+
+.diamond-grid {
+  background-image:
+    linear-gradient(45deg, rgba(230, 57, 70, 0.03) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(230, 57, 70, 0.03) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(230, 57, 70, 0.03) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(230, 57, 70, 0.03) 75%);
+  background-size: 60px 60px;
+  background-position: 0 0, 0 30px, 30px -30px, -30px 0;
+}
+
+/* ======================== */
+/* GLITCH TEXT              */
+/* ======================== */
+
+@keyframes glitch-1 {
+  0%, 100% { clip-path: inset(0 0 96% 0); transform: translate(-2px, 2px); }
+  20% { clip-path: inset(20% 0 60% 0); transform: translate(2px, -1px); }
+  40% { clip-path: inset(50% 0 30% 0); transform: translate(-1px, 1px); }
+  60% { clip-path: inset(70% 0 10% 0); transform: translate(1px, -2px); }
+  80% { clip-path: inset(10% 0 80% 0); transform: translate(-2px, 0px); }
+}
+
+@keyframes glitch-2 {
+  0%, 100% { clip-path: inset(96% 0 0 0); transform: translate(2px, -2px); }
+  20% { clip-path: inset(60% 0 20% 0); transform: translate(-2px, 1px); }
+  40% { clip-path: inset(30% 0 50% 0); transform: translate(1px, -1px); }
+  60% { clip-path: inset(10% 0 70% 0); transform: translate(-1px, 2px); }
+  80% { clip-path: inset(80% 0 10% 0); transform: translate(2px, 0px); }
+}
+
+.glitch-text {
+  position: relative;
+  isolation: isolate;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.6;
+}
+
+.glitch-text::before {
+  color: #E63946;
+  animation: glitch-1 3s infinite linear alternate-reverse;
+}
+
+.glitch-text::after {
+  color: #FF6B6B;
+  animation: glitch-2 3s infinite linear alternate-reverse;
+}
+
+/* ======================== */
+/* GLOW PULSE CTA           */
+/* ======================== */
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(230, 57, 70, 0.4), 0 0 40px rgba(230, 57, 70, 0.1); }
+  50% { box-shadow: 0 0 30px rgba(230, 57, 70, 0.6), 0 0 60px rgba(230, 57, 70, 0.2); }
+}
+
+.glow-btn {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+/* ======================== */
+/* SCROLL INDICATOR         */
+/* ======================== */
+
+@keyframes scroll-bounce {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(12px); opacity: 0.5; }
+}
+
+.scroll-indicator {
+  animation: scroll-bounce 2s ease-in-out infinite;
+}
+
+/* ======================== */
+/* CUSTOM SCROLLBAR         */
+/* ======================== */
+
+.scroll-container::-webkit-scrollbar {
+  width: 3px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  background: #0A0A0A;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background: #E63946;
+  border-radius: 2px;
+}
+
+/* ======================== */
+/* LOADING SCREEN           */
+/* ======================== */
+
+@keyframes mask-breathe {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.05); opacity: 1; }
+}
+
+.mask-breathe {
+  animation: mask-breathe 2s ease-in-out infinite;
+}
+
+/* ======================== */
+/* HORIZONTAL SCROLL        */
+/* ======================== */
+
+.horizontal-scroll {
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.horizontal-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.horizontal-scroll > * {
+  flex-shrink: 0;
+}
+
+/* ======================== */
+/* RED ACCENT LINE          */
+/* ======================== */
+
+.accent-line {
+  position: relative;
+}
+
+.accent-line::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #E63946;
+  transition: width 0.3s ease;
+}
+
+.accent-line:hover::before {
+  width: 5px;
+}
+
+/* ======================== */
+/* BACK TO TOP BUTTON       */
+/* ======================== */
+
+.back-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 90;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(230, 57, 70, 0.8);
+  border: 1px solid rgba(230, 57, 70, 0.4);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+}
+
+.back-to-top:hover {
+  background: #E63946;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(230, 57, 70, 0.3);
+}
+
+/* ======================== */
+/* BASE STYLES              */
+/* ======================== */
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #0A0A0A;
+  color: #FAFAFA;
+  font-family: var(--font-body), system-ui, sans-serif;
+  overflow: hidden;
+}
+
+::selection {
+  background: rgba(230, 57, 70, 0.3);
+  color: #FAFAFA;
 }
