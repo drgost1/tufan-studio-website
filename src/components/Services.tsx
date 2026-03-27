@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SERVICES } from "@/lib/constants";
 import { SERVICE_ICONS, DiamondIcon } from "./Icons";
+import FloatingEmbers from "./FloatingEmbers";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -18,19 +19,23 @@ export default function Services() {
     if (!container) return;
 
     const ctx = gsap.context(() => {
-      // Title slam in
-      gsap.from(titleRef.current, {
-        x: -200,
-        opacity: 0,
-        duration: 0.8,
-        ease: "power4.out",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          scroller: container,
-          start: "top 80%",
-          toggleActions: "play none none reverse",
-        },
-      });
+      // Title reveal with clip-path curtain
+      gsap.fromTo(
+        titleRef.current,
+        { clipPath: "inset(0 100% 0 0)", opacity: 0 },
+        {
+          clipPath: "inset(0 0% 0 0)",
+          opacity: 1,
+          duration: 1,
+          ease: "power4.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            scroller: container,
+            start: "top 80%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
 
       // Cards stagger in
       const cards = cardsRef.current?.querySelectorAll(".service-card");
@@ -63,6 +68,7 @@ export default function Services() {
     >
       {/* Subtle gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-storm-black via-transparent to-storm-black z-[1]" />
+      <FloatingEmbers count={12} />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 w-full">
         {/* Section title */}
@@ -89,7 +95,7 @@ export default function Services() {
             return (
               <div
                 key={service.title}
-                className="service-card glass-card accent-line rounded-xl p-6 pl-8 group cursor-default"
+                className="service-card glass-card accent-line card-shimmer rounded-xl p-6 pl-8 group cursor-default relative overflow-hidden"
               >
                 {/* Icon */}
                 <div className="w-12 h-12 rounded-lg bg-storm-red/10 flex items-center justify-center mb-4 group-hover:bg-storm-red/20 transition-colors duration-300">

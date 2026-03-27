@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { BRAND, SOCIALS } from "@/lib/constants";
 import { DiscordIcon, YoutubeIcon, ShoppingBagIcon, DiamondIcon } from "./Icons";
 import KitsuneLogo from "./KitsuneLogo";
+import FloatingEmbers from "./FloatingEmbers";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -65,6 +66,8 @@ export default function Contact() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(230,57,70,0.05)_0%,transparent_70%)]" />
         <div className="absolute inset-0 diamond-grid opacity-30" />
       </div>
+
+      <FloatingEmbers count={18} />
 
       {/* Top border line */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-storm-red/30 to-transparent" />

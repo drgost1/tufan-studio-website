@@ -5,122 +5,66 @@ import { useEffect, useRef, useCallback } from "react";
 interface Particle {
   x: number;
   y: number;
-  targetX: number;
-  targetY: number;
-  originX: number;
-  originY: number;
   size: number;
   color: string;
   alpha: number;
   vx: number;
   vy: number;
-  life: number;
-  maxLife: number;
+  angle: number;
+  radius: number;
+  speed: number;
   drift: number;
-}
-
-// Kitsune mask shape defined as coordinate points (simplified)
-const MASK_POINTS: [number, number][] = [];
-
-function generateMaskPoints(cx: number, cy: number, scale: number) {
-  const points: [number, number][] = [];
-  // Fox face outline
-  for (let i = 0; i < 200; i++) {
-    const t = (i / 200) * Math.PI * 2;
-    // Egg-shaped head
-    const rx = 80 * scale;
-    const ry = 90 * scale;
-    const x = cx + rx * Math.cos(t);
-    const y = cy + ry * Math.sin(t) * 0.9;
-    points.push([x, y]);
-  }
-  // Left ear
-  for (let i = 0; i < 30; i++) {
-    const t = i / 30;
-    const x = cx - 55 * scale + t * 20 * scale;
-    const y = cy - 80 * scale - t * 60 * scale + t * t * 30 * scale;
-    points.push([x, y]);
-  }
-  // Right ear
-  for (let i = 0; i < 30; i++) {
-    const t = i / 30;
-    const x = cx + 55 * scale - t * 20 * scale;
-    const y = cy - 80 * scale - t * 60 * scale + t * t * 30 * scale;
-    points.push([x, y]);
-  }
-  // Diamond pattern on forehead
-  const dSize = 20 * scale;
-  const dY = cy - 30 * scale;
-  for (let i = 0; i < 40; i++) {
-    const t = (i / 40) * Math.PI * 2;
-    points.push([cx + dSize * Math.cos(t), dY + dSize * Math.sin(t) * 0.7]);
-  }
-  // Eyes (left)
-  for (let i = 0; i < 20; i++) {
-    const t = (i / 20) * Math.PI * 2;
-    points.push([cx - 30 * scale + 15 * scale * Math.cos(t), cy + 5 * scale + 8 * scale * Math.sin(t)]);
-  }
-  // Eyes (right)
-  for (let i = 0; i < 20; i++) {
-    const t = (i / 20) * Math.PI * 2;
-    points.push([cx + 30 * scale + 15 * scale * Math.cos(t), cy + 5 * scale + 8 * scale * Math.sin(t)]);
-  }
-  return points;
+  life: number;
 }
 
 export default function ParticleCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
-  const mouseRef = useRef({ x: 0, y: 0 });
+  const mouseRef = useRef({ x: -1000, y: -1000 });
   const animFrameRef = useRef<number>(0);
   const visibleRef = useRef(true);
-  const phaseRef = useRef<"forming" | "dissolving" | "storm">("forming");
-  const phaseTimerRef = useRef(0);
+  const timeRef = useRef(0);
 
   const initParticles = useCallback((width: number, height: number) => {
     const cx = width / 2;
     const cy = height / 2;
-    const scale = Math.min(width, height) / 500;
-    const points = generateMaskPoints(cx, cy, scale);
     const particles: Particle[] = [];
 
-    for (let i = 0; i < points.length; i++) {
-      const [tx, ty] = points[i];
+    // Vortex particles — spiraling storm
+    for (let i = 0; i < 250; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const radius = 30 + Math.random() * Math.min(width, height) * 0.4;
       particles.push({
-        x: cx + (Math.random() - 0.5) * width,
-        y: cy + (Math.random() - 0.5) * height,
-        targetX: tx,
-        targetY: ty,
-        originX: tx,
-        originY: ty,
-        size: Math.random() * 2.5 + 0.5,
-        color: Math.random() > 0.3 ? "#E63946" : "#FAFAFA",
-        alpha: Math.random() * 0.5 + 0.5,
+        x: cx + Math.cos(angle) * radius,
+        y: cy + Math.sin(angle) * radius,
+        size: Math.random() * 2 + 0.5,
+        color: Math.random() > 0.25 ? "#E63946" : "#FAFAFA",
+        alpha: Math.random() * 0.6 + 0.2,
         vx: 0,
         vy: 0,
-        life: Math.random() * 100,
-        maxLife: 100 + Math.random() * 200,
-        drift: Math.random() * 0.5,
+        angle,
+        radius,
+        speed: 0.002 + Math.random() * 0.004,
+        drift: (Math.random() - 0.5) * 0.3,
+        life: Math.random() * 1000,
       });
     }
 
-    // Extra ambient particles
-    for (let i = 0; i < 80; i++) {
+    // Ember particles — small bright dots drifting upward
+    for (let i = 0; i < 60; i++) {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        targetX: Math.random() * width,
-        targetY: Math.random() * height,
-        originX: Math.random() * width,
-        originY: Math.random() * height,
-        size: Math.random() * 1.5 + 0.3,
-        color: Math.random() > 0.5 ? "rgba(230,57,70,0.3)" : "rgba(255,255,255,0.15)",
-        alpha: Math.random() * 0.3 + 0.1,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5,
-        life: Math.random() * 300,
-        maxLife: 300,
+        size: Math.random() * 1.2 + 0.3,
+        color: i % 3 === 0 ? "#FF6B6B" : "rgba(230,57,70,0.5)",
+        alpha: Math.random() * 0.4 + 0.1,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: -(Math.random() * 0.5 + 0.1),
+        angle: 0,
+        radius: 0,
+        speed: 0,
         drift: Math.random() * 2,
+        life: Math.random() * 500,
       });
     }
 
@@ -147,7 +91,6 @@ export default function ParticleCanvas() {
     };
     window.addEventListener("mousemove", handleMouse);
 
-    // Pause when off-screen
     const observer = new IntersectionObserver(
       ([entry]) => {
         visibleRef.current = entry.isIntersecting;
@@ -164,73 +107,89 @@ export default function ParticleCanvas() {
         animFrameRef.current = 0;
         return;
       }
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      phaseTimerRef.current++;
+      const w = canvas.width;
+      const h = canvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
 
-      // Cycle phases
-      if (phaseTimerRef.current > 400 && phaseRef.current === "forming") {
-        phaseRef.current = "dissolving";
-        phaseTimerRef.current = 0;
-      } else if (phaseTimerRef.current > 200 && phaseRef.current === "dissolving") {
-        phaseRef.current = "storm";
-        phaseTimerRef.current = 0;
-      } else if (phaseTimerRef.current > 200 && phaseRef.current === "storm") {
-        phaseRef.current = "forming";
-        phaseTimerRef.current = 0;
-      }
+      ctx.clearRect(0, 0, w, h);
+      timeRef.current++;
 
       const particles = particlesRef.current;
+      const mx = mouseRef.current.x;
+      const my = mouseRef.current.y;
+
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
-        const mx = mouseRef.current.x;
-        const my = mouseRef.current.y;
+
+        if (p.speed > 0) {
+          // Vortex particle — orbit around center
+          p.angle += p.speed;
+          // Slowly pulse radius
+          const pulseRadius = p.radius + Math.sin(timeRef.current * 0.005 + p.drift * 10) * 20;
+          const targetX = cx + Math.cos(p.angle) * pulseRadius;
+          const targetY = cy + Math.sin(p.angle) * pulseRadius;
+          p.x += (targetX - p.x) * 0.05;
+          p.y += (targetY - p.y) * 0.05;
+        } else {
+          // Ember particle — drift upward
+          p.x += p.vx + Math.sin(timeRef.current * 0.01 + p.drift * 5) * 0.2;
+          p.y += p.vy;
+          // Wrap around
+          if (p.y < -10) { p.y = h + 10; p.x = Math.random() * w; }
+          if (p.x < -10) p.x = w + 10;
+          if (p.x > w + 10) p.x = -10;
+        }
+
+        // Mouse repulsion
         const dx = mx - p.x;
         const dy = my - p.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-
-        // Mouse repulsion
-        if (dist > 0 && dist < 120) {
-          const force = (120 - dist) / 120;
-          p.vx -= (dx / dist) * force * 2;
-          p.vy -= (dy / dist) * force * 2;
+        if (dist > 0 && dist < 150) {
+          const force = (150 - dist) / 150;
+          p.x -= (dx / dist) * force * 3;
+          p.y -= (dy / dist) * force * 3;
         }
 
-        if (phaseRef.current === "forming") {
-          // Move toward target (mask shape)
-          p.vx += (p.targetX - p.x) * 0.02;
-          p.vy += (p.targetY - p.y) * 0.02;
-        } else if (phaseRef.current === "dissolving") {
-          // Drift away
-          p.vx += (Math.random() - 0.5) * 0.8;
-          p.vy += (Math.random() - 0.5) * 0.8 - 0.2;
-        } else {
-          // Storm: swirl around center
-          const cx = canvas.width / 2;
-          const cy = canvas.height / 2;
-          const toCenterX = cx - p.x;
-          const toCenterY = cy - p.y;
-          const angle = Math.atan2(toCenterY, toCenterX);
-          p.vx += Math.cos(angle + Math.PI / 2) * 0.3 + toCenterX * 0.001;
-          p.vy += Math.sin(angle + Math.PI / 2) * 0.3 + toCenterY * 0.001;
-        }
-
-        // Damping
-        p.vx *= 0.95;
-        p.vy *= 0.95;
-
-        p.x += p.vx;
-        p.y += p.vy;
-
-        // Flicker alpha
+        // Flicker
         p.life++;
-        const flicker = 0.7 + 0.3 * Math.sin(p.life * 0.05 + p.drift * 10);
+        const flicker = 0.7 + 0.3 * Math.sin(p.life * 0.04 + p.drift * 8);
 
+        // Draw with glow
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fillStyle = p.color;
         ctx.globalAlpha = p.alpha * flicker;
         ctx.fill();
+
+        // Glow for larger particles
+        if (p.size > 1.2) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = p.alpha * flicker * 0.08;
+          ctx.fill();
+        }
+      }
+
+      // Draw faint vortex lines connecting nearby particles
+      ctx.strokeStyle = "rgba(230, 57, 70, 0.03)";
+      ctx.lineWidth = 0.5;
+      ctx.globalAlpha = 1;
+      for (let i = 0; i < Math.min(particles.length, 100); i++) {
+        for (let j = i + 1; j < Math.min(particles.length, 100); j++) {
+          const a = particles[i];
+          const b = particles[j];
+          const d = Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+          if (d < 80) {
+            ctx.globalAlpha = (1 - d / 80) * 0.15;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
       }
 
       ctx.globalAlpha = 1;

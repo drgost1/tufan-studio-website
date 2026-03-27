@@ -250,6 +250,47 @@ h1, h2, h3, .font-heading {
 }
 
 /* ======================== */
+/* MARQUEE SCROLL           */
+/* ======================== */
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-33.333%); }
+}
+
+/* ======================== */
+/* SHIMMER GLAZE ON CARDS   */
+/* ======================== */
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) rotate(15deg); }
+  100% { transform: translateX(200%) rotate(15deg); }
+}
+
+.card-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(230, 57, 70, 0.06) 45%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(230, 57, 70, 0.06) 55%,
+    transparent 60%
+  );
+  z-index: 30;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.card-shimmer:hover::after {
+  opacity: 1;
+  animation: shimmer 1.5s ease-in-out;
+}
+
+/* ======================== */
 /* EQUALIZER BARS (music)   */
 /* ======================== */
 

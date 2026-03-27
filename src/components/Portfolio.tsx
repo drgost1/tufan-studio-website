@@ -81,18 +81,22 @@ export default function Portfolio() {
     if (!container) return;
 
     const ctx = gsap.context(() => {
-      gsap.from(titleRef.current, {
-        y: 40,
-        opacity: 0,
-        duration: 0.8,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          scroller: container,
-          start: "top 80%",
-          toggleActions: "play none none reverse",
-        },
-      });
+      gsap.fromTo(
+        titleRef.current,
+        { clipPath: "inset(100% 0 0 0)", opacity: 0 },
+        {
+          clipPath: "inset(0% 0 0 0)",
+          opacity: 1,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            scroller: container,
+            start: "top 80%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
 
       const cards = scrollRef.current?.querySelectorAll(".portfolio-card");
       if (cards) {
@@ -181,7 +185,7 @@ export default function Portfolio() {
             {PORTFOLIO_ITEMS.map((item, index) => (
               <div
                 key={index}
-                className="portfolio-card relative w-[300px] sm:w-[400px] aspect-[16/10] rounded-2xl overflow-hidden group select-none"
+                className="portfolio-card card-shimmer relative w-[300px] sm:w-[400px] aspect-[16/10] rounded-2xl overflow-hidden group select-none"
               >
                 {/* Background image */}
                 <div className="absolute inset-0">
