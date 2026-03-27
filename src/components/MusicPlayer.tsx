@@ -1,35 +1,11 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const MUSIC_TRACKS = [
-  { youtubeId: "k2qgadSvNyU", startAt: 12, title: "Track 1" },
+  { src: "/music/track1.mp3", title: "Track 1" },
 ];
-
-// Preload YouTube API on page load
-let ytApiReady = false;
-let ytApiPromise: Promise<void> | null = null;
-
-function preloadYouTubeAPI() {
-  if (ytApiPromise) return ytApiPromise;
-  ytApiPromise = new Promise((resolve) => {
-    if (typeof window === "undefined") return;
-    if (window.YT?.Player) {
-      ytApiReady = true;
-      resolve();
-      return;
-    }
-    (window as unknown as Record<string, unknown>).onYouTubeIframeAPIReady = () => {
-      ytApiReady = true;
-      resolve();
-    };
-    const tag = document.createElement("script");
-    tag.src = "https://www.youtube.com/iframe_api";
-    document.head.appendChild(tag);
-  });
-  return ytApiPromise;
-}
 
 export default function MusicPlayer() {
   const [asked, setAsked] = useState(false);
@@ -38,18 +14,9 @@ export default function MusicPlayer() {
   const [expanded, setExpanded] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(0);
   const [volume, setVolume] = useState(50);
-  const playerRef = useRef<YT.Player | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const volumeRef = useRef(50);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Keep volume ref in sync
   useEffect(() => {
-    volumeRef.current = volume;
-  }, [volume]);
-
-  // Preload API early + show prompt
-  useEffect(() => {
-    preloadYouTubeAPI();
     const timer = setTimeout(() => {
       const dismissed = sessionStorage.getItem("music-dismissed");
       if (!dismissed) {
@@ -61,61 +28,32 @@ export default function MusicPlayer() {
     return () => clearTimeout(timer);
   }, []);
 
-  const createPlayer = useCallback((trackIndex: number) => {
-    if (!ytApiReady || !window.YT?.Player) return;
-
-    const track = MUSIC_TRACKS[trackIndex];
-
-    if (playerRef.current) {
-      try { playerRef.current.destroy(); } catch { /* ignore */ }
-      playerRef.current = null;
+  const getAudio = () => {
+    if (!audioRef.current) {
+      audioRef.current = new Audio(MUSIC_TRACKS[currentTrack].src);
+      audioRef.current.loop = true;
+      audioRef.current.volume = volume / 100;
     }
+    return audioRef.current;
+  };
 
-    if (containerRef.current) {
-      containerRef.current.innerHTML = "";
-      const div = document.createElement("div");
-      div.id = "yt-music-player-" + Date.now();
-      containerRef.current.appendChild(div);
-
-      playerRef.current = new window.YT.Player(div.id, {
-        height: "40",
-        width: "40",
-        videoId: track.youtubeId,
-        playerVars: {
-          autoplay: 1,
-          start: track.startAt,
-          loop: 1,
-          playlist: track.youtubeId,
-          controls: 0,
-          modestbranding: 1,
-          rel: 0,
-          playsinline: 1,
-          origin: window.location.origin,
-        },
-        events: {
-          onReady: (event: YT.PlayerEvent) => {
-            event.target.setVolume(volumeRef.current);
-            event.target.playVideo();
-          },
-          onStateChange: (event: YT.OnStateChangeEvent) => {
-            // If playback fails (e.g. blocked), try unmuting approach
-            if (event.data === -1 || event.data === 5) {
-              // Unstarted or cued — try playing again
-              setTimeout(() => event.target.playVideo(), 500);
-            }
-          },
-        },
-      });
+  const playTrack = (index: number) => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
     }
-  }, []);
+    const audio = new Audio(MUSIC_TRACKS[index].src);
+    audio.loop = true;
+    audio.volume = volume / 100;
+    audioRef.current = audio;
+    audio.play();
+    setPlaying(true);
+  };
 
-  // Called synchronously from click handler (user gesture)
-  const handleAccept = async () => {
+  const handleAccept = () => {
     setShowPrompt(false);
     setAsked(true);
-    setPlaying(true);
-    if (!ytApiReady) await preloadYouTubeAPI();
-    createPlayer(0);
+    playTrack(0);
   };
 
   const handleDecline = () => {
@@ -124,60 +62,39 @@ export default function MusicPlayer() {
     sessionStorage.setItem("music-dismissed", "1");
   };
 
-  const togglePlay = async () => {
-    if (!playerRef.current) {
+  const togglePlay = () => {
+    const audio = getAudio();
+    if (playing) {
+      audio.pause();
+      setPlaying(false);
+    } else {
+      audio.play();
       setPlaying(true);
-      if (!ytApiReady) await preloadYouTubeAPI();
-      createPlayer(currentTrack);
-      return;
-    }
-    try {
-      const state = playerRef.current.getPlayerState();
-      if (state === 1) {
-        playerRef.current.pauseVideo();
-        setPlaying(false);
-      } else {
-        playerRef.current.playVideo();
-        setPlaying(true);
-      }
-    } catch {
-      // Player destroyed or not ready, recreate
-      setPlaying(true);
-      createPlayer(currentTrack);
     }
   };
 
   const nextTrack = () => {
     const next = (currentTrack + 1) % MUSIC_TRACKS.length;
     setCurrentTrack(next);
-    setPlaying(true);
-    createPlayer(next);
+    playTrack(next);
   };
 
   const prevTrack = () => {
     const prev = (currentTrack - 1 + MUSIC_TRACKS.length) % MUSIC_TRACKS.length;
     setCurrentTrack(prev);
-    setPlaying(true);
-    createPlayer(prev);
+    playTrack(prev);
   };
 
   const handleVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = Number(e.target.value);
     setVolume(val);
-    if (playerRef.current) {
-      try { playerRef.current.setVolume(val); } catch { /* ignore */ }
+    if (audioRef.current) {
+      audioRef.current.volume = val / 100;
     }
   };
 
   return (
     <>
-      {/* YouTube player — behind the controller, clipped by parent overflow */}
-      <div
-        ref={containerRef}
-        className="fixed bottom-6 left-6 w-10 h-10 rounded-full overflow-hidden pointer-events-none"
-        style={{ zIndex: 88, opacity: 0.01 }}
-      />
-
       {/* Music prompt */}
       <AnimatePresence>
         {showPrompt && (
