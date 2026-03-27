@@ -7,25 +7,28 @@ const MUSIC_TRACKS = [
   { youtubeId: "k2qgadSvNyU", startAt: 12, title: "Track 1" },
 ];
 
-// Extend window for YouTube API
-declare global {
-  interface Window {
-    YT: typeof YT;
-    onYouTubeIframeAPIReady: () => void;
-  }
-}
+// Preload YouTube API on page load
+let ytApiReady = false;
+let ytApiPromise: Promise<void> | null = null;
 
-function loadYouTubeAPI(): Promise<void> {
-  return new Promise((resolve) => {
-    if (window.YT && window.YT.Player) {
+function preloadYouTubeAPI() {
+  if (ytApiPromise) return ytApiPromise;
+  ytApiPromise = new Promise((resolve) => {
+    if (typeof window === "undefined") return;
+    if (window.YT?.Player) {
+      ytApiReady = true;
       resolve();
       return;
     }
-    window.onYouTubeIframeAPIReady = () => resolve();
+    (window as unknown as Record<string, unknown>).onYouTubeIframeAPIReady = () => {
+      ytApiReady = true;
+      resolve();
+    };
     const tag = document.createElement("script");
     tag.src = "https://www.youtube.com/iframe_api";
     document.head.appendChild(tag);
   });
+  return ytApiPromise;
 }
 
 export default function MusicPlayer() {
@@ -37,9 +40,16 @@ export default function MusicPlayer() {
   const [volume, setVolume] = useState(50);
   const playerRef = useRef<YT.Player | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const volumeRef = useRef(50);
 
-  // Show prompt after loading screen
+  // Keep volume ref in sync
   useEffect(() => {
+    volumeRef.current = volume;
+  }, [volume]);
+
+  // Preload API early + show prompt
+  useEffect(() => {
+    preloadYouTubeAPI();
     const timer = setTimeout(() => {
       const dismissed = sessionStorage.getItem("music-dismissed");
       if (!dismissed) {
@@ -51,25 +61,23 @@ export default function MusicPlayer() {
     return () => clearTimeout(timer);
   }, []);
 
-  const createPlayer = useCallback(
-    (trackIndex: number) => {
-      const track = MUSIC_TRACKS[trackIndex];
+  const createPlayer = useCallback((trackIndex: number) => {
+    if (!ytApiReady || !window.YT?.Player) return;
 
-      // Destroy existing player
-      if (playerRef.current) {
-        playerRef.current.destroy();
-        playerRef.current = null;
-      }
+    const track = MUSIC_TRACKS[trackIndex];
 
-      // Create fresh div for the player
-      if (containerRef.current) {
-        containerRef.current.innerHTML = "";
-        const div = document.createElement("div");
-        div.id = "yt-music-player";
-        containerRef.current.appendChild(div);
-      }
+    if (playerRef.current) {
+      try { playerRef.current.destroy(); } catch { /* ignore */ }
+      playerRef.current = null;
+    }
 
-      playerRef.current = new window.YT.Player("yt-music-player", {
+    if (containerRef.current) {
+      containerRef.current.innerHTML = "";
+      const div = document.createElement("div");
+      div.id = "yt-music-player-" + Date.now();
+      containerRef.current.appendChild(div);
+
+      playerRef.current = new window.YT.Player(div.id, {
         height: "40",
         width: "40",
         videoId: track.youtubeId,
@@ -79,35 +87,35 @@ export default function MusicPlayer() {
           loop: 1,
           playlist: track.youtubeId,
           controls: 0,
-          showinfo: 0,
           modestbranding: 1,
           rel: 0,
           playsinline: 1,
+          origin: window.location.origin,
         },
         events: {
           onReady: (event: YT.PlayerEvent) => {
-            event.target.setVolume(volume);
+            event.target.setVolume(volumeRef.current);
             event.target.playVideo();
+          },
+          onStateChange: (event: YT.OnStateChangeEvent) => {
+            // If playback fails (e.g. blocked), try unmuting approach
+            if (event.data === -1 || event.data === 5) {
+              // Unstarted or cued — try playing again
+              setTimeout(() => event.target.playVideo(), 500);
+            }
           },
         },
       });
-    },
-    [volume]
-  );
+    }
+  }, []);
 
-  const startMusic = useCallback(
-    async (trackIndex: number) => {
-      await loadYouTubeAPI();
-      createPlayer(trackIndex);
-    },
-    [createPlayer]
-  );
-
-  const handleAccept = () => {
+  // Called synchronously from click handler (user gesture)
+  const handleAccept = async () => {
     setShowPrompt(false);
     setAsked(true);
     setPlaying(true);
-    startMusic(0);
+    if (!ytApiReady) await preloadYouTubeAPI();
+    createPlayer(0);
   };
 
   const handleDecline = () => {
@@ -116,21 +124,26 @@ export default function MusicPlayer() {
     sessionStorage.setItem("music-dismissed", "1");
   };
 
-  const togglePlay = () => {
+  const togglePlay = async () => {
     if (!playerRef.current) {
       setPlaying(true);
-      startMusic(currentTrack);
+      if (!ytApiReady) await preloadYouTubeAPI();
+      createPlayer(currentTrack);
       return;
     }
-    const state = playerRef.current.getPlayerState();
-    if (state === 1) {
-      // Playing -> pause
-      playerRef.current.pauseVideo();
-      setPlaying(false);
-    } else {
-      // Paused/other -> play
-      playerRef.current.playVideo();
+    try {
+      const state = playerRef.current.getPlayerState();
+      if (state === 1) {
+        playerRef.current.pauseVideo();
+        setPlaying(false);
+      } else {
+        playerRef.current.playVideo();
+        setPlaying(true);
+      }
+    } catch {
+      // Player destroyed or not ready, recreate
       setPlaying(true);
+      createPlayer(currentTrack);
     }
   };
 
@@ -138,37 +151,34 @@ export default function MusicPlayer() {
     const next = (currentTrack + 1) % MUSIC_TRACKS.length;
     setCurrentTrack(next);
     setPlaying(true);
-    startMusic(next);
+    createPlayer(next);
   };
 
   const prevTrack = () => {
-    const prev =
-      (currentTrack - 1 + MUSIC_TRACKS.length) % MUSIC_TRACKS.length;
+    const prev = (currentTrack - 1 + MUSIC_TRACKS.length) % MUSIC_TRACKS.length;
     setCurrentTrack(prev);
     setPlaying(true);
-    startMusic(prev);
+    createPlayer(prev);
   };
 
   const handleVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = Number(e.target.value);
     setVolume(val);
     if (playerRef.current) {
-      playerRef.current.setVolume(val);
+      try { playerRef.current.setVolume(val); } catch { /* ignore */ }
     }
   };
 
   return (
     <>
-      {/* YouTube player container — positioned behind the music controller button
-          Must remain "visible" (not display:none, not opacity:0, not off-screen)
-          for browser autoplay policies to allow audio on remote domains */}
+      {/* YouTube player — behind the controller, clipped by parent overflow */}
       <div
         ref={containerRef}
-        className="fixed bottom-6 left-6 w-10 h-10 overflow-hidden pointer-events-none"
-        style={{ zIndex: 89, clipPath: "inset(0 0 0 0)" }}
+        className="fixed bottom-6 left-6 w-10 h-10 rounded-full overflow-hidden pointer-events-none"
+        style={{ zIndex: 88, opacity: 0.01 }}
       />
 
-      {/* Music prompt overlay */}
+      {/* Music prompt */}
       <AnimatePresence>
         {showPrompt && (
           <motion.div
@@ -191,23 +201,13 @@ export default function MusicPlayer() {
                   <circle cx="18" cy="16" r="3" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-storm-light mb-2">
-                Enable Background Music?
-              </h3>
-              <p className="text-sm text-storm-muted mb-6">
-                Enhance your experience with ambient music while browsing.
-              </p>
+              <h3 className="text-xl font-bold text-storm-light mb-2">Enable Background Music?</h3>
+              <p className="text-sm text-storm-muted mb-6">Enhance your experience with ambient music while browsing.</p>
               <div className="flex gap-3">
-                <button
-                  onClick={handleDecline}
-                  className="flex-1 px-4 py-2.5 rounded-xl border border-white/10 text-storm-muted hover:text-storm-light hover:border-white/20 transition-all text-sm font-medium"
-                >
+                <button onClick={handleDecline} className="flex-1 px-4 py-2.5 rounded-xl border border-white/10 text-storm-muted hover:text-storm-light hover:border-white/20 transition-all text-sm font-medium">
                   No thanks
                 </button>
-                <button
-                  onClick={handleAccept}
-                  className="flex-1 px-4 py-2.5 rounded-xl bg-storm-red hover:bg-storm-red-dark text-white transition-all text-sm font-bold glow-btn"
-                >
+                <button onClick={handleAccept} className="flex-1 px-4 py-2.5 rounded-xl bg-storm-red hover:bg-storm-red-dark text-white transition-all text-sm font-bold glow-btn">
                   Play Music
                 </button>
               </div>
@@ -216,7 +216,7 @@ export default function MusicPlayer() {
         )}
       </AnimatePresence>
 
-      {/* Bottom-left floating controller */}
+      {/* Bottom-left controller */}
       {asked && (
         <div className="fixed bottom-6 left-6 z-[90]">
           <AnimatePresence mode="wait">
@@ -228,7 +228,7 @@ export default function MusicPlayer() {
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 onClick={() => setExpanded(true)}
-                className="w-10 h-10 rounded-full bg-storm-dark/90 backdrop-blur-xl border border-white/10 flex items-center justify-center hover:border-storm-red/40 transition-all duration-300 group shadow-lg shadow-black/30"
+                className="w-10 h-10 rounded-full bg-storm-dark/90 backdrop-blur-xl border border-white/10 flex items-center justify-center hover:border-storm-red/40 transition-all duration-300 shadow-lg shadow-black/30"
                 aria-label="Open music controller"
               >
                 {playing ? (
@@ -239,9 +239,7 @@ export default function MusicPlayer() {
                   </div>
                 ) : (
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E63946" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9 18V5l12-2v13" />
-                    <circle cx="6" cy="18" r="3" />
-                    <circle cx="18" cy="16" r="3" />
+                    <path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" />
                   </svg>
                 )}
               </motion.button>
@@ -256,28 +254,15 @@ export default function MusicPlayer() {
                 style={{ borderRadius: 16 }}
               >
                 <div className="p-3">
-                  {/* Top row */}
                   <div className="flex items-center justify-between mb-2.5">
                     <div className="flex-1 overflow-hidden mr-2">
-                      <p className="text-[10px] tracking-widest uppercase text-storm-red font-medium truncate">
-                        Now Playing
-                      </p>
-                      <p className="text-xs text-storm-light truncate">
-                        {MUSIC_TRACKS[currentTrack].title}
-                      </p>
+                      <p className="text-[10px] tracking-widest uppercase text-storm-red font-medium truncate">Now Playing</p>
+                      <p className="text-xs text-storm-light truncate">{MUSIC_TRACKS[currentTrack].title}</p>
                     </div>
-                    <button
-                      onClick={() => setExpanded(false)}
-                      className="w-5 h-5 rounded-full flex items-center justify-center text-storm-muted hover:text-storm-light transition-colors shrink-0"
-                      aria-label="Collapse"
-                    >
-                      <svg width="10" height="10" viewBox="0 0 10 10" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round">
-                        <path d="M2 3.5L5 6.5L8 3.5" />
-                      </svg>
+                    <button onClick={() => setExpanded(false)} className="w-5 h-5 rounded-full flex items-center justify-center text-storm-muted hover:text-storm-light transition-colors shrink-0" aria-label="Collapse">
+                      <svg width="10" height="10" viewBox="0 0 10 10" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"><path d="M2 3.5L5 6.5L8 3.5" /></svg>
                     </button>
                   </div>
-
-                  {/* Controls */}
                   <div className="flex items-center justify-center gap-3 mb-2.5">
                     <button onClick={prevTrack} className="text-storm-muted hover:text-storm-light transition-colors" aria-label="Previous">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" /></svg>
@@ -293,20 +278,13 @@ export default function MusicPlayer() {
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" /></svg>
                     </button>
                   </div>
-
-                  {/* Volume */}
                   <div className="flex items-center gap-2">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
                       <path d="M11 5L6 9H2v6h4l5 4V5z" />
                       {volume > 0 && <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />}
                       {volume > 50 && <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />}
                     </svg>
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={volume}
-                      onChange={handleVolume}
+                    <input type="range" min="0" max="100" value={volume} onChange={handleVolume}
                       className="w-full h-1 appearance-none rounded-full outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-2.5 [&::-webkit-slider-thumb]:h-2.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-storm-red [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-2.5 [&::-moz-range-thumb]:h-2.5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-storm-red [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:cursor-pointer"
                       style={{ background: `linear-gradient(to right, #E63946 ${volume}%, #1A1A1A ${volume}%)` }}
                     />
