@@ -10,6 +10,7 @@ import Team from "@/components/Team";
 import Contact from "@/components/Contact";
 import CustomCursor from "@/components/CustomCursor";
 import ScrollProgress from "@/components/ScrollProgress";
+import MusicPlayer from "@/components/MusicPlayer";
 
 export default function Home() {
   return (
@@ -17,6 +18,7 @@ export default function Home() {
       <LoadingScreen />
       <CustomCursor />
       <ScrollProgress />
+      <MusicPlayer />
 
       {/* Film grain noise overlay */}
       <div className="noise-overlay" />
