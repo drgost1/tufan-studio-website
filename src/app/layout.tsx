@@ -24,7 +24,7 @@ const body = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("http://217.217.253.236:6900"),
+  metadataBase: new URL("https://tufanstudio.net"),
   title: {
     default: "Tufan Studio | We Are The Storm",
     template: "%s | Tufan Studio",
@@ -59,28 +59,32 @@ export const metadata: Metadata = {
     apple: "/logo.png",
     shortcut: "/logo.png",
   },
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: "Tufan Studio | We Are The Storm",
     description:
       "Game development, FiveM servers, GTA V cinematics, and web development — crafted with the force of a storm.",
+    url: "https://tufanstudio.net",
     type: "website",
     siteName: "Tufan Studio",
     locale: "en_US",
     images: [
       {
-        url: "/logo.png",
-        width: 512,
-        height: 512,
-        alt: "Tufan Studio - Kitsune Logo",
+        url: "/images/og-banner.png",
+        width: 640,
+        height: 640,
+        alt: "Tufan Studio - We Are The Storm",
       },
     ],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Tufan Studio | We Are The Storm",
     description:
       "Game development, FiveM servers, GTA V cinematics, and web development — crafted with the force of a storm.",
-    images: ["/logo.png"],
+    images: ["/images/og-banner.png"],
   },
 };
 
