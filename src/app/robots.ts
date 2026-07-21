@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://tufanstudio.net/sitemap.xml",
+    sitemap: "https://www.tufanstudio.net/sitemap.xml",
   };
 }

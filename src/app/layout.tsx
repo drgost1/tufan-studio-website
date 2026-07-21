@@ -24,7 +24,7 @@ const body = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://tufanstudio.net"),
+  metadataBase: new URL("https://www.tufanstudio.net"),
   title: {
     default: "Tufan Studio | We Are The Storm",
     template: "%s | Tufan Studio",
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     title: "Tufan Studio | We Are The Storm",
     description:
       "Game development, FiveM servers, GTA V cinematics, and web development — crafted with the force of a storm.",
-    url: "https://tufanstudio.net",
+    url: "https://www.tufanstudio.net",
     type: "website",
     siteName: "Tufan Studio",
     locale: "en_US",
