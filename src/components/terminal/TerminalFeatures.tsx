@@ -60,7 +60,7 @@ export default function TerminalFeatures() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-storm-dark pt-14 sm:pt-20 pb-20 sm:pb-28 px-6 section-fade-top"
+      className="relative bg-storm-dark pt-14 sm:pt-20 pb-16 sm:pb-20 px-6 section-fade-top"
     >
       <div className="absolute inset-0 bg-gradient-to-b from-storm-dark via-storm-black/40 to-storm-dark pointer-events-none" />
 

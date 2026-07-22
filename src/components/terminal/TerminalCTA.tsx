@@ -43,7 +43,7 @@ export default function TerminalCTA() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-storm-dark py-20 sm:py-28 px-6 section-fade-top overflow-hidden"
+      className="relative bg-storm-dark pt-16 sm:pt-20 pb-20 sm:pb-24 px-6 section-fade-top overflow-hidden"
     >
       <div className="absolute inset-0 diamond-grid opacity-30 pointer-events-none" />
       <FloatingEmbers count={16} />

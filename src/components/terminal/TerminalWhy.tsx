@@ -39,7 +39,7 @@ export default function TerminalWhy() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative bg-storm-black py-20 sm:py-28 px-6 overflow-hidden">
+    <section ref={sectionRef} className="relative bg-storm-black py-16 sm:py-20 px-6 overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(230,57,70,0.05)_0%,transparent_70%)] pointer-events-none" />
 
       <div className="relative z-10 max-w-6xl mx-auto min-w-0">
