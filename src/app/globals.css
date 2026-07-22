@@ -33,6 +33,14 @@ h1, h2, h3, .font-heading {
   scroll-behavior: smooth;
 }
 
+/* Pages built as a normal flowing document (not a full-viewport snap deck)
+   opt out of mandatory snap — otherwise the browser tries to snap to
+   sections that have no snap-align/100vh target, which makes scrolling janky
+   and leaves dead space. GSAP still finds `.scroll-container` as its scroller. */
+.scroll-container--free {
+  scroll-snap-type: none;
+}
+
 .scroll-section {
   scroll-snap-align: start;
   min-height: 100vh;

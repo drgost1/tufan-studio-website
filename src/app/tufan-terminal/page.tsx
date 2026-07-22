@@ -65,7 +65,7 @@ export default function TufanTerminalPage() {
       <div className="noise-overlay" />
 
       <Navigation />
-      <main className="scroll-container">
+      <main className="scroll-container scroll-container--free">
         <TerminalHero />
         <TerminalFeatures />
         <TerminalWhy />

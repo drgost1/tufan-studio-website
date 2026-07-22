@@ -8,7 +8,7 @@ import TerminalMockup from "./TerminalMockup";
 
 export default function TerminalHero() {
   return (
-    <section className="relative bg-storm-black overflow-hidden pt-32 sm:pt-40 pb-20 sm:pb-28 px-6">
+    <section className="relative bg-storm-black overflow-hidden pt-28 sm:pt-36 pb-14 sm:pb-16 px-6">
       {/* Radial glow */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(230,57,70,0.12),transparent_45%)] pointer-events-none" />
       <div className="absolute inset-0 diamond-grid opacity-40 pointer-events-none" />
