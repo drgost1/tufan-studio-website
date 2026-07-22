@@ -1,61 +1,19 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import Link from "next/link";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TUFAN_TERMINAL } from "@/lib/constants";
+import { useReveal } from "@/lib/useReveal";
 import { DiamondIcon, DownloadIcon } from "./Icons";
 
-gsap.registerPlugin(ScrollTrigger);
-
 export default function TufanTerminalPromo() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const mockupRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const container = document.querySelector(".scroll-container");
-    if (!container) return;
-
-    const ctx = gsap.context(() => {
-      const lines = contentRef.current?.querySelectorAll(".promo-line");
-      if (lines) {
-        gsap.from(lines, {
-          x: -40,
-          opacity: 0,
-          duration: 0.6,
-          stagger: 0.12,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            scroller: container,
-            start: "top 70%",
-            toggleActions: "play none none none",
-          },
-        });
-      }
-
-      gsap.from(mockupRef.current, {
-        scale: 0.92,
-        opacity: 0,
-        duration: 0.8,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          scroller: container,
-          start: "top 65%",
-          toggleActions: "play none none reverse",
-        },
-      });
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+  const contentRef = useReveal<HTMLDivElement>({
+    selector: ".promo-line",
+    stagger: 0.12,
+  });
+  const mockupRef = useReveal<HTMLDivElement>();
 
   return (
     <section
-      ref={sectionRef}
       id="terminal"
       className="scroll-section flex flex-col items-center justify-center bg-storm-dark relative py-20 section-fade-top"
     >

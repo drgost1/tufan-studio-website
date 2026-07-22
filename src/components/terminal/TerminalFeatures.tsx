@@ -1,67 +1,19 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TUFAN_TERMINAL_FEATURES } from "@/lib/constants";
+import { useReveal } from "@/lib/useReveal";
 import { TERMINAL_FEATURE_ICONS, DiamondIcon } from "../Icons";
 
-gsap.registerPlugin(ScrollTrigger);
-
 export default function TerminalFeatures() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const cardsRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const container = document.querySelector(".scroll-container");
-    if (!container) return;
-
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        titleRef.current,
-        { clipPath: "inset(0 100% 0 0)", opacity: 0 },
-        {
-          clipPath: "inset(0 0% 0 0)",
-          opacity: 1,
-          duration: 1,
-          ease: "power4.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            scroller: container,
-            start: "top 80%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-
-      const cards = cardsRef.current?.querySelectorAll(".terminal-feature-card");
-      if (cards) {
-        gsap.set(cards, { y: 40, opacity: 0 });
-        gsap.to(cards, {
-          y: 0,
-          opacity: 1,
-          duration: 0.6,
-          stagger: 0.08,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            scroller: container,
-            start: "top 65%",
-            toggleActions: "play none none none",
-          },
-        });
-      }
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+  // IntersectionObserver reveals — reliable inside the custom scroll container.
+  const titleRef = useReveal<HTMLDivElement>();
+  const cardsRef = useReveal<HTMLDivElement>({
+    selector: ".terminal-feature-card",
+    stagger: 0.06,
+  });
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative bg-storm-dark pt-14 sm:pt-20 pb-16 sm:pb-20 px-6 section-fade-top"
-    >
+    <section className="relative bg-storm-dark pt-14 sm:pt-20 pb-16 sm:pb-20 px-6 section-fade-top">
       <div className="absolute inset-0 bg-gradient-to-b from-storm-dark via-storm-black/40 to-storm-dark pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto min-w-0">

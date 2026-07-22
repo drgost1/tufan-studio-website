@@ -7,7 +7,6 @@ import TerminalHero from "@/components/terminal/TerminalHero";
 import TerminalFeatures from "@/components/terminal/TerminalFeatures";
 import TerminalWhy from "@/components/terminal/TerminalWhy";
 import TerminalCTA from "@/components/terminal/TerminalCTA";
-import ScrollRefresh from "@/components/terminal/ScrollRefresh";
 
 export const metadata: Metadata = {
   title: "Tufan Terminal",
@@ -61,7 +60,6 @@ export default function TufanTerminalPage() {
       <CustomCursor />
       <ScrollProgress />
       <MusicPlayer />
-      <ScrollRefresh />
 
       {/* Film grain noise overlay */}
       <div className="noise-overlay" />

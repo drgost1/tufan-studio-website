@@ -1,50 +1,19 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import Link from "next/link";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TUFAN_TERMINAL } from "@/lib/constants";
+import { useReveal } from "@/lib/useReveal";
 import { DownloadIcon, DiamondIcon } from "../Icons";
 import FloatingEmbers from "../FloatingEmbers";
 
-gsap.registerPlugin(ScrollTrigger);
-
 export default function TerminalCTA() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const container = document.querySelector(".scroll-container");
-    if (!container) return;
-
-    const ctx = gsap.context(() => {
-      const elements = contentRef.current?.querySelectorAll(".cta-animate");
-      if (elements) {
-        gsap.from(elements, {
-          y: 30,
-          opacity: 0,
-          duration: 0.6,
-          stagger: 0.1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            scroller: container,
-            start: "top 75%",
-            toggleActions: "play none none none",
-          },
-        });
-      }
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+  const contentRef = useReveal<HTMLDivElement>({
+    selector: ".cta-animate",
+    stagger: 0.1,
+  });
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative bg-storm-dark pt-16 sm:pt-20 pb-20 sm:pb-24 px-6 section-fade-top overflow-hidden"
-    >
+    <section className="relative bg-storm-dark pt-16 sm:pt-20 pb-20 sm:pb-24 px-6 section-fade-top overflow-hidden">
       <div className="absolute inset-0 diamond-grid opacity-30 pointer-events-none" />
       <FloatingEmbers count={16} />
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-storm-red/30 to-transparent" />
