@@ -5,6 +5,7 @@ import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
 import Services from "@/components/Services";
 import Portfolio from "@/components/Portfolio";
+import TufanTerminalPromo from "@/components/TufanTerminalPromo";
 import About from "@/components/About";
 import Team from "@/components/Team";
 import Contact from "@/components/Contact";
@@ -28,6 +29,7 @@ export default function Home() {
         <Hero />
         <Services />
         <Portfolio />
+        <TufanTerminalPromo />
         <About />
         <Team />
         <Contact />

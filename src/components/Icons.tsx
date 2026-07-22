@@ -171,3 +171,126 @@ export const SERVICE_ICONS: Record<string, React.FC<{ className?: string }>> = {
   code: CodeIcon,
   users: UsersIcon,
 };
+
+export function FolderIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg {...iconProps} viewBox="0 0 24 24" className={className}>
+      <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" />
+    </svg>
+  );
+}
+
+export function FolderOpenIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg {...iconProps} viewBox="0 0 24 24" className={className}>
+      <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v1H7a2 2 0 0 0-1.94 1.515L3 17V7Z" />
+      <path d="m3 17 1.5-6a2 2 0 0 1 1.94-1.515H21l-2.1 6.616A2 2 0 0 1 16.996 17.5H5a2 2 0 0 1-2-2v-.5Z" />
+    </svg>
+  );
+}
+
+export function LayoutSplitIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg {...iconProps} viewBox="0 0 24 24" className={className}>
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <path d="M11 3v18" />
+      <path d="M14 8h5M14 14h5" />
+    </svg>
+  );
+}
+
+export function TerminalIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg {...iconProps} viewBox="0 0 24 24" className={className}>
+      <rect x="2" y="4" width="20" height="16" rx="2" />
+      <path d="m6 9 3 3-3 3" />
+      <path d="M12 15h6" />
+    </svg>
+  );
+}
+
+export function ZoomIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg {...iconProps} viewBox="0 0 24 24" className={className}>
+      <circle cx="10" cy="10" r="7" />
+      <path d="m21 21-6-6" />
+      <path d="M7.5 10h5" />
+      <path d="M10 7.5v5" />
+    </svg>
+  );
+}
+
+export function KeyboardIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg {...iconProps} viewBox="0 0 24 24" className={className}>
+      <rect x="2" y="5" width="20" height="14" rx="2" />
+      <path d="M6 9h0M10 9h0M14 9h0M18 9h0M6 13h0M18 13h0" strokeWidth="2.5" />
+      <path d="M9 13h6" />
+    </svg>
+  );
+}
+
+export function SearchIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg {...iconProps} viewBox="0 0 24 24" className={className}>
+      <circle cx="11" cy="11" r="7" />
+      <path d="m21 21-4.35-4.35" />
+    </svg>
+  );
+}
+
+export function GpuIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg {...iconProps} viewBox="0 0 24 24" className={className}>
+      <rect x="4" y="6" width="16" height="12" rx="1.5" />
+      <path d="M8 10v4M12 10v4M16 10v4" />
+      <path d="M4 9h-2M4 15h-2M22 9h-2M22 15h-2" />
+    </svg>
+  );
+}
+
+export function RefreshIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg {...iconProps} viewBox="0 0 24 24" className={className}>
+      <path d="M3 12a9 9 0 0 1 15.5-6.36L21 8" />
+      <path d="M21 3v5h-5" />
+      <path d="M21 12a9 9 0 0 1-15.5 6.36L3 16" />
+      <path d="M3 21v-5h5" />
+    </svg>
+  );
+}
+
+export function ShellsIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg {...iconProps} viewBox="0 0 24 24" className={className}>
+      <rect x="2" y="3" width="9" height="8" rx="1.5" />
+      <rect x="13" y="3" width="9" height="8" rx="1.5" />
+      <rect x="2" y="13" width="9" height="8" rx="1.5" />
+      <rect x="13" y="13" width="9" height="8" rx="1.5" />
+    </svg>
+  );
+}
+
+export function DownloadIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg {...iconProps} viewBox="0 0 24 24" className={className}>
+      <path d="M12 3v12" />
+      <path d="m7 10 5 5 5-5" />
+      <path d="M4 19h16" />
+    </svg>
+  );
+}
+
+export const TERMINAL_FEATURE_ICONS: Record<string, React.FC<{ className?: string }>> = {
+  folder: FolderIcon,
+  folderOpen: FolderOpenIcon,
+  layout: LayoutSplitIcon,
+  terminal: TerminalIcon,
+  zoom: ZoomIcon,
+  palette: PaletteIcon,
+  keyboard: KeyboardIcon,
+  search: SearchIcon,
+  gpu: GpuIcon,
+  refresh: RefreshIcon,
+  shells: ShellsIcon,
+};

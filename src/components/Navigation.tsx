@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import KitsuneLogo from "./KitsuneLogo";
 import { NAV_LINKS, SOCIALS } from "@/lib/constants";
@@ -10,6 +12,8 @@ export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
+  const isHome = pathname === "/";
 
   useEffect(() => {
     const container = document.querySelector(".scroll-container");
@@ -18,7 +22,7 @@ export default function Navigation() {
     const handleScroll = () => {
       setScrolled(container.scrollTop > 50);
 
-      // Detect active section
+      // Detect active section (only meaningful on the one-page home layout)
       const sections = container.querySelectorAll(".scroll-section");
       sections.forEach((section) => {
         const rect = section.getBoundingClientRect();
@@ -29,8 +33,9 @@ export default function Navigation() {
     };
 
     container.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
     return () => container.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [pathname]);
 
   const scrollToSection = (href: string) => {
     setMobileOpen(false);
@@ -40,6 +45,10 @@ export default function Navigation() {
     if (el && container) {
       container.scrollTo({ top: (el as HTMLElement).offsetTop, behavior: "smooth" });
     }
+  };
+
+  const handleLogoClick = () => {
+    if (isHome) scrollToSection("#hero");
   };
 
   return (
@@ -56,37 +65,89 @@ export default function Navigation() {
       >
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           {/* Logo */}
-          <button
-            onClick={() => scrollToSection("#hero")}
-            className="flex items-center gap-3 group"
-          >
-            <KitsuneLogo
-              size={36}
-              className="transition-transform duration-300 group-hover:scale-110"
-            />
-            <span className="text-sm font-bold tracking-[0.2em] uppercase text-storm-light hidden sm:block">
-              Tufan Studio
-            </span>
-          </button>
+          {isHome ? (
+            <button
+              onClick={handleLogoClick}
+              className="flex items-center gap-3 group"
+            >
+              <KitsuneLogo
+                size={36}
+                className="transition-transform duration-300 group-hover:scale-110"
+              />
+              <span className="text-sm font-bold tracking-[0.2em] uppercase text-storm-light hidden sm:block">
+                Tufan Studio
+              </span>
+            </button>
+          ) : (
+            <Link href="/" className="flex items-center gap-3 group">
+              <KitsuneLogo
+                size={36}
+                className="transition-transform duration-300 group-hover:scale-110"
+              />
+              <span className="text-sm font-bold tracking-[0.2em] uppercase text-storm-light hidden sm:block">
+                Tufan Studio
+              </span>
+            </Link>
+          )}
 
           {/* Desktop Nav Links */}
           <div className="hidden md:flex items-center gap-8">
-            {NAV_LINKS.map((link) => (
-              <button
-                key={link.href}
-                onClick={() => scrollToSection(link.href)}
-                className="relative text-sm font-medium tracking-wide text-storm-muted hover:text-storm-light transition-colors duration-300"
-              >
-                {link.label}
-                {activeSection === link.href.replace("#", "") && (
-                  <motion.div
-                    layoutId="nav-indicator"
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-storm-red"
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  />
-                )}
-              </button>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const isRoute = link.href.startsWith("/");
+
+              if (isRoute) {
+                const active = pathname === link.href;
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`relative text-sm font-medium tracking-wide transition-colors duration-300 ${
+                      active ? "text-storm-light" : "text-storm-muted hover:text-storm-light"
+                    }`}
+                  >
+                    {link.label}
+                    {active && (
+                      <motion.div
+                        layoutId="nav-indicator"
+                        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-storm-red"
+                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                      />
+                    )}
+                  </Link>
+                );
+              }
+
+              if (!isHome) {
+                // Anchor lives on the home page — do a real navigation there.
+                return (
+                  <a
+                    key={link.href}
+                    href={`/${link.href}`}
+                    className="relative text-sm font-medium tracking-wide text-storm-muted hover:text-storm-light transition-colors duration-300"
+                  >
+                    {link.label}
+                  </a>
+                );
+              }
+
+              const active = activeSection === link.href.replace("#", "");
+              return (
+                <button
+                  key={link.href}
+                  onClick={() => scrollToSection(link.href)}
+                  className="relative text-sm font-medium tracking-wide text-storm-muted hover:text-storm-light transition-colors duration-300"
+                >
+                  {link.label}
+                  {active && (
+                    <motion.div
+                      layoutId="nav-indicator"
+                      className="absolute -bottom-1 left-0 right-0 h-0.5 bg-storm-red"
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                </button>
+              );
+            })}
 
             {/* Discord CTA */}
             <a
@@ -125,18 +186,54 @@ export default function Navigation() {
             </div>
 
             <nav className="flex flex-col items-center gap-8 relative z-10">
-              {NAV_LINKS.map((link, i) => (
-                <motion.button
-                  key={link.href}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                  onClick={() => scrollToSection(link.href)}
-                  className="text-2xl font-bold tracking-[0.15em] uppercase text-storm-light hover:text-storm-red transition-colors"
-                >
-                  {link.label}
-                </motion.button>
-              ))}
+              {NAV_LINKS.map((link, i) => {
+                const isRoute = link.href.startsWith("/");
+                const baseClass =
+                  "text-2xl font-bold tracking-[0.15em] uppercase text-storm-light hover:text-storm-red transition-colors";
+
+                if (isRoute) {
+                  return (
+                    <motion.div
+                      key={link.href}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.1 }}
+                    >
+                      <Link href={link.href} onClick={() => setMobileOpen(false)} className={baseClass}>
+                        {link.label}
+                      </Link>
+                    </motion.div>
+                  );
+                }
+
+                if (!isHome) {
+                  return (
+                    <motion.a
+                      key={link.href}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.1 }}
+                      href={`/${link.href}`}
+                      className={baseClass}
+                    >
+                      {link.label}
+                    </motion.a>
+                  );
+                }
+
+                return (
+                  <motion.button
+                    key={link.href}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                    onClick={() => scrollToSection(link.href)}
+                    className={baseClass}
+                  >
+                    {link.label}
+                  </motion.button>
+                );
+              })}
 
               <motion.a
                 initial={{ opacity: 0, y: 20 }}
