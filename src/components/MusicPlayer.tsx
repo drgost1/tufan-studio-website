@@ -18,14 +18,25 @@ export default function MusicPlayer() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      const dismissed = sessionStorage.getItem("music-dismissed");
-      if (!dismissed) {
+      const prompted = sessionStorage.getItem("music-prompted");
+      if (!prompted) {
         setShowPrompt(true);
       } else {
         setAsked(true);
       }
     }, 3000);
     return () => clearTimeout(timer);
+  }, []);
+
+  // Detached Audio objects keep playing after unmount unless explicitly stopped
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = "";
+        audioRef.current = null;
+      }
+    };
   }, []);
 
   const getAudio = () => {
@@ -53,13 +64,14 @@ export default function MusicPlayer() {
   const handleAccept = () => {
     setShowPrompt(false);
     setAsked(true);
+    sessionStorage.setItem("music-prompted", "1");
     playTrack(0);
   };
 
   const handleDecline = () => {
     setShowPrompt(false);
     setAsked(true);
-    sessionStorage.setItem("music-dismissed", "1");
+    sessionStorage.setItem("music-prompted", "1");
   };
 
   const togglePlay = () => {

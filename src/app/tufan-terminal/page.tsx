@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Navigation from "@/components/Navigation";
 import CustomCursor from "@/components/CustomCursor";
 import ScrollProgress from "@/components/ScrollProgress";
-import MusicPlayer from "@/components/MusicPlayer";
 import TerminalHero from "@/components/terminal/TerminalHero";
 import TerminalFeatures from "@/components/terminal/TerminalFeatures";
 import TerminalWhy from "@/components/terminal/TerminalWhy";
@@ -59,7 +58,6 @@ export default function TufanTerminalPage() {
     <>
       <CustomCursor />
       <ScrollProgress />
-      <MusicPlayer />
 
       {/* Film grain noise overlay */}
       <div className="noise-overlay" />

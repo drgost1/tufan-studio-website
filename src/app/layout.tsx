@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
+import MusicPlayer from "@/components/MusicPlayer";
 import "./globals.css";
 
 // Display font for headings — bold, cinematic
@@ -98,7 +99,11 @@ export default function RootLayout({
       lang="en"
       className={`${heading.variable} ${body.variable} h-full antialiased`}
     >
-      <body className="h-full overflow-hidden">{children}</body>
+      <body className="h-full overflow-hidden">
+        {/* Lives in the layout so audio survives route changes — pages remount, layouts don't */}
+        <MusicPlayer />
+        {children}
+      </body>
     </html>
   );
 }
