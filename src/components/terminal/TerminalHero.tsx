@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { TUFAN_TERMINAL } from "@/lib/constants";
 import { DiamondIcon, DownloadIcon } from "../Icons";
 import FloatingEmbers from "../FloatingEmbers";
-import TerminalMockup from "./TerminalMockup";
 
 export default function TerminalHero() {
   return (
@@ -80,9 +79,17 @@ export default function TerminalHero() {
           initial={{ opacity: 0, scale: 0.94, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="min-w-0"
+          className="relative min-w-0"
         >
-          <TerminalMockup variant="full" />
+          <div className="absolute -inset-6 bg-storm-red/10 blur-3xl rounded-[40px] pointer-events-none" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/tufan-terminal-screenshot.png"
+            alt="Tufan Terminal running three split PowerShell panes with a projects sidebar"
+            width={1394}
+            height={894}
+            className="relative w-full h-auto rounded-xl border border-white/10 shadow-2xl shadow-black/70"
+          />
         </motion.div>
       </div>
     </section>

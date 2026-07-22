@@ -6,7 +6,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TUFAN_TERMINAL } from "@/lib/constants";
 import { DiamondIcon, DownloadIcon } from "./Icons";
-import TerminalMockup from "./terminal/TerminalMockup";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -32,7 +31,7 @@ export default function TufanTerminalPromo() {
             trigger: sectionRef.current,
             scroller: container,
             start: "top 70%",
-            toggleActions: "play none none reverse",
+            toggleActions: "play none none none",
           },
         });
       }
@@ -108,9 +107,17 @@ export default function TufanTerminalPromo() {
             </p>
           </div>
 
-          {/* Compact mockup */}
-          <div ref={mockupRef} className="min-w-0">
-            <TerminalMockup variant="compact" />
+          {/* Product screenshot */}
+          <div ref={mockupRef} className="relative min-w-0">
+            <div className="absolute -inset-4 bg-storm-red/10 blur-3xl rounded-[32px] pointer-events-none" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/tufan-terminal-screenshot.png"
+              alt="Tufan Terminal with a projects sidebar and split terminal panes"
+              width={1394}
+              height={894}
+              className="relative w-full h-auto rounded-xl border border-white/10 shadow-2xl shadow-black/60"
+            />
           </div>
         </div>
       </div>
