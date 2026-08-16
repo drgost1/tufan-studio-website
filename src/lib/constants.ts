@@ -109,6 +109,20 @@ export const TEAM_MEMBERS = [
     role: "Community Manager",
     tags: ["Beta Tester", "Game Administrator", "Discord Administrator"],
   },
+  {
+    name: "Humaira",
+    username: "mild2004",
+    aka: "Kanao / Mitsuri",
+    role: "3D Developer",
+    tags: [
+      "3D Modeler",
+      "AI Artist",
+      "Beginner",
+      "Beta Tester",
+      "Level Designer",
+      "Administrator",
+    ],
+  },
 ] as const;
 
 export const STATS = [

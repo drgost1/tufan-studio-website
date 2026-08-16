@@ -52,13 +52,14 @@ Services · Portfolio · About · Team · Contact (single-page anchors)
 | Communities Built | 5+ |
 | Lines of Code | 50K+ |
 
-## Team (`TEAM_MEMBERS`) — 4 members
+## Team (`TEAM_MEMBERS`) — 5 members
 | Name | Username | AKA | Role | Tags |
 |---|---|---|---|---|
 | Nafis Iqbal | DRgost1 | Obai ZORO | Founder | Full-Stack Developer, Animator, Administrator |
 | Nayeem Hossain | alhossain | LiQuid Gaming | Co-Founder | 3D Modeler / 3D Artist, Video Editor, Administrator |
 | Foysal Ahmed | .bugfire | Mukhosh | Owner | Level Designer, Administrator |
 | Fariza | peekab0w0 | Peekab0w0 | Community Manager | Beta Tester, Game Administrator, Discord Administrator |
+| Humaira | mild2004 | Kanao / Mitsuri | 3D Developer | 3D Modeler, AI Artist, Beginner, Beta Tester, Level Designer, Administrator |
 
 ## Contact section (`src/components/Contact.tsx` — hardcoded copy)
 - Heading: **JOIN THE STORM**
