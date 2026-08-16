@@ -58,7 +58,7 @@ Services · Portfolio · About · Team · Contact (single-page anchors)
 | Nafis Iqbal | DRgost1 | Obai ZORO | Founder | Full-Stack Developer, Animator, Administrator |
 | Nayeem Hossain | alhossain | LiQuid Gaming | Co-Founder | 3D Modeler / 3D Artist, Video Editor, Administrator |
 | Foysal Ahmed | .bugfire | Mukhosh | Owner | Level Designer, Administrator |
-| Md Shohanur Rahman | Qtnwte | Reed | Creative Member | 3D Modeler, AI Artist |
+| Fariza | peekab0w0 | Peekab0w0 | Community Manager | Beta Tester, Game Administrator, Discord Administrator |
 
 ## Contact section (`src/components/Contact.tsx` — hardcoded copy)
 - Heading: **JOIN THE STORM**
