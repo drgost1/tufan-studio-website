@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import MusicPlayer from "@/components/MusicPlayer";
+import ClickBurst from "@/components/ClickBurst";
 import "./globals.css";
 
 // Display font for headings — bold, cinematic
@@ -102,6 +103,8 @@ export default function RootLayout({
       <body className="h-full overflow-hidden">
         {/* Lives in the layout so audio survives route changes — pages remount, layouts don't */}
         <MusicPlayer />
+        {/* Global so the click feedback survives route changes, same as the audio */}
+        <ClickBurst />
         {children}
       </body>
     </html>

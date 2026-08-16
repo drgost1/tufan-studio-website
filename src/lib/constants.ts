@@ -103,13 +103,6 @@ export const TEAM_MEMBERS = [
     tags: ["Level Designer", "Administrator"],
   },
   {
-    name: "Fariza",
-    username: "peekab0w0",
-    aka: "Peekab0w0",
-    role: "Community Manager",
-    tags: ["Beta Tester", "Game Administrator", "Discord Administrator"],
-  },
-  {
     name: "Humaira",
     username: "mild2004",
     aka: "Kanao / Mitsuri",
@@ -122,6 +115,13 @@ export const TEAM_MEMBERS = [
       "Level Designer",
       "Administrator",
     ],
+  },
+  {
+    name: "Fariza",
+    username: "peekab0w0",
+    aka: "Peekab0w0",
+    role: "Community Manager",
+    tags: ["Beta Tester", "Game Administrator", "Discord Administrator"],
   },
 ] as const;
 

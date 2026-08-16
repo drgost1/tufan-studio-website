@@ -7,6 +7,7 @@ export default function CustomCursor() {
   const trailRef = useRef<HTMLDivElement>(null);
   const [hovering, setHovering] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [pressing, setPressing] = useState(false);
 
   useEffect(() => {
     // Only show custom cursor on devices with fine pointer (no touch)
@@ -37,7 +38,13 @@ export default function CustomCursor() {
       return interactives;
     };
 
+    const onDown = () => setPressing(true);
+    const onUp = () => setPressing(false);
+
     window.addEventListener("mousemove", onMove);
+    window.addEventListener("mousedown", onDown);
+    window.addEventListener("mouseup", onUp);
+    window.addEventListener("blur", onUp);
 
     // Initial + observe DOM changes
     let interactives = addListeners();
@@ -52,6 +59,9 @@ export default function CustomCursor() {
 
     return () => {
       window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mousedown", onDown);
+      window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("blur", onUp);
       observer.disconnect();
       interactives.forEach((el) => {
         el.removeEventListener("mouseenter", onEnterInteractive);
@@ -64,12 +74,12 @@ export default function CustomCursor() {
     <>
       <div
         ref={cursorRef}
-        className={`custom-cursor ${hovering ? "hovering" : ""}`}
+        className={`custom-cursor ${hovering ? "hovering" : ""} ${pressing ? "pressing" : ""}`}
         style={{ opacity: visible ? 1 : 0 }}
       />
       <div
         ref={trailRef}
-        className="custom-cursor-trail"
+        className={`custom-cursor-trail ${pressing ? "pressing" : ""}`}
         style={{ opacity: visible ? 1 : 0 }}
       />
     </>
