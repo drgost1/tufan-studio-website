@@ -119,7 +119,7 @@ export default function Contact() {
                 className="inline-flex items-center justify-center gap-3 px-7 py-3.5 border border-storm-red/30 text-storm-light hover:text-white hover:border-storm-red/70 hover:bg-storm-red/10 font-bold rounded-xl transition-all duration-300"
               >
                 <DiscordIcon className="w-5 h-5 text-storm-red" />
-                DM the Founder
+                DM Us
               </a>
             </div>
 

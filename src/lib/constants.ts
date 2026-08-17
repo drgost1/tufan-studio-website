@@ -133,7 +133,7 @@ export const STATS = [
 ] as const;
 
 export const SOCIALS = {
-  discord: "https://discord.gg/tufanstudio",
+  discord: "https://discord.gg/tufanstudiocommonserver",
   youtube: "https://youtube.com/@tufanstudio_ts",
   tebex: "https://tufanstudio.tebex.io/",
   founderDiscord: "https://discord.com/users/1215664354620608613",

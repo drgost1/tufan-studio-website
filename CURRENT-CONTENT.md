@@ -70,7 +70,8 @@ Services · Portfolio · About · Team · Contact (single-page anchors)
 ## Social links (`SOCIALS`)
 | Platform | URL |
 |---|---|
-| Discord | https://discord.gg/tufanstudio |
+| Discord (server invite) | https://discord.gg/tufanstudiocommonserver |
+| Discord (founder DM) | https://discord.com/users/1215664354620608613 |
 | YouTube | https://youtube.com/@tufanstudio_ts |
 | Tebex store | https://tufanstudio.tebex.io/ |
 
