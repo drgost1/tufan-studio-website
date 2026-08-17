@@ -9,6 +9,21 @@ import KitsuneLogo from "./KitsuneLogo";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const JOIN_TYPE = "Join the Team";
+
+/**
+ * The hash carries a `?type=` suffix, so it is not a real element id and the
+ * browser will not jump to it on its own — set the hash for ContactForm to
+ * read, then scroll the target manually.
+ */
+function onJoinClick(event: React.MouseEvent<HTMLAnchorElement>) {
+  event.preventDefault();
+  window.location.hash = `contact-form?type=${encodeURIComponent(JOIN_TYPE)}`;
+  document
+    .getElementById("contact-form")
+    ?.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
 export default function Team() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
@@ -137,19 +152,30 @@ export default function Team() {
             </div>
           ))}
 
-          {/* "Join Us" card */}
+          {/* "Join Us" card — jumps to the contact form with "Join the Team" preselected */}
           <div className="team-card">
-            <div className="relative w-64 bg-storm-gray/30 backdrop-blur-sm border border-dashed border-white/10 rounded-2xl p-8 flex flex-col items-center text-center hover:border-storm-red/30 transition-all duration-500 cursor-pointer group">
-              <div className="w-24 h-24 rounded-full bg-storm-dark/50 flex items-center justify-center mb-6 border-2 border-dashed border-white/10 group-hover:border-storm-red/30 transition-colors">
-                <span className="text-3xl text-storm-muted group-hover:text-storm-red transition-colors">+</span>
+            <a
+              href={`#contact-form?type=${encodeURIComponent("Join the Team")}`}
+              onClick={onJoinClick}
+              className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-storm-red/60 rounded-2xl"
+            >
+              <div className="relative w-64 bg-storm-gray/30 backdrop-blur-sm border border-dashed border-white/10 rounded-2xl p-8 flex flex-col items-center text-center hover:border-storm-red/30 hover:shadow-[0_0_40px_rgba(230,57,70,0.08)] transition-all duration-500 cursor-pointer group">
+                <div className="w-24 h-24 rounded-full bg-storm-dark/50 flex items-center justify-center mb-6 border-2 border-dashed border-white/10 group-hover:border-storm-red/30 transition-colors">
+                  <span className="text-3xl text-storm-muted group-hover:text-storm-red group-hover:rotate-90 transition-all duration-300">
+                    +
+                  </span>
+                </div>
+                <h3 className="text-xl font-bold text-storm-muted group-hover:text-storm-light transition-colors">
+                  Join The Pack
+                </h3>
+                <p className="text-sm text-storm-muted/60 mt-1">
+                  We&apos;re always looking for talent
+                </p>
+                <span className="mt-4 text-[10px] tracking-[0.2em] uppercase text-storm-red/0 group-hover:text-storm-red/80 transition-colors duration-300">
+                  Apply Now →
+                </span>
               </div>
-              <h3 className="text-xl font-bold text-storm-muted group-hover:text-storm-light transition-colors">
-                Join The Pack
-              </h3>
-              <p className="text-sm text-storm-muted/60 mt-1">
-                We&apos;re always looking for talent
-              </p>
-            </div>
+            </a>
           </div>
         </div>
       </div>

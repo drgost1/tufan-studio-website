@@ -3,10 +3,11 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { BRAND, SOCIALS } from "@/lib/constants";
+import { BRAND, SOCIALS, CONTACT_EMAIL } from "@/lib/constants";
 import { DiscordIcon, YoutubeIcon, ShoppingBagIcon, DiamondIcon } from "./Icons";
 import KitsuneLogo from "./KitsuneLogo";
 import FloatingEmbers from "./FloatingEmbers";
+import ContactForm from "./ContactForm";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -59,7 +60,7 @@ export default function Contact() {
     <section
       ref={sectionRef}
       id="contact"
-      className="scroll-section flex flex-col items-center justify-center bg-storm-black relative"
+      className="scroll-section flex flex-col items-center justify-center bg-storm-black relative py-24 lg:py-20"
     >
       {/* Background particles effect (subtle) */}
       <div className="absolute inset-0">
@@ -72,65 +73,94 @@ export default function Contact() {
       {/* Top border line */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-storm-red/30 to-transparent" />
 
-      <div ref={contentRef} className="relative z-10 flex flex-col items-center text-center px-6 max-w-2xl mx-auto">
+      <div ref={contentRef} className="relative z-10 w-full px-6 max-w-6xl mx-auto">
         {/* Kitsune watermark */}
-        <div className="contact-animate absolute opacity-[0.02] pointer-events-none">
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.02] pointer-events-none hidden lg:block">
           <KitsuneLogo size={500} />
         </div>
 
-        {/* Label */}
-        <div className="contact-animate flex items-center gap-3 mb-6">
-          <DiamondIcon className="text-storm-red w-2 h-2" />
-          <span className="text-sm tracking-[0.3em] uppercase text-storm-red font-medium">
-            Get In Touch
-          </span>
-          <DiamondIcon className="text-storm-red w-2 h-2" />
-        </div>
+        <div className="relative grid gap-12 lg:grid-cols-2 lg:gap-16 lg:items-center">
+          {/* Left — pitch and the direct channels */}
+          <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
+            {/* Label */}
+            <div className="contact-animate flex items-center gap-3 mb-6">
+              <DiamondIcon className="text-storm-red w-2 h-2" />
+              <span className="text-sm tracking-[0.3em] uppercase text-storm-red font-medium">
+                Get In Touch
+              </span>
+              <DiamondIcon className="text-storm-red w-2 h-2" />
+            </div>
 
-        {/* Title */}
-        <h2 className="contact-animate text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-storm-light mb-4">
-          JOIN THE{" "}
-          <span className="text-storm-red">STORM</span>
-        </h2>
+            {/* Title */}
+            <h2 className="contact-animate text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-storm-light mb-4">
+              JOIN THE <span className="text-storm-red">STORM</span>
+            </h2>
 
-        <p className="contact-animate text-lg text-storm-muted mb-10 max-w-md">
-          Ready to create something extraordinary? Jump into our Discord — that&apos;s where the storm begins.
-        </p>
+            <p className="contact-animate text-lg text-storm-muted mb-8 max-w-md">
+              Want to hire us, or want to build with us? Fill the form — it lands
+              straight in our inbox. Prefer to talk first? The Discord is always open.
+            </p>
 
-        {/* Discord CTA */}
-        <a
-          href={SOCIALS.discord}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="contact-animate inline-flex items-center gap-3 px-10 py-4 bg-storm-red hover:bg-storm-red-dark text-white text-lg font-bold rounded-2xl transition-all duration-300 glow-btn hover:scale-105"
-        >
-          <DiscordIcon className="w-6 h-6" />
-          Join Our Discord
-        </a>
-
-        {/* Social links */}
-        <div className="contact-animate flex items-center gap-8 mt-12">
-          {socialLinks.map((social) => {
-            const Icon = social.icon;
-            return (
+            {/* Direct channels */}
+            <div className="contact-animate flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-3 w-full sm:w-auto">
               <a
-                key={social.name}
-                href={social.href}
+                href={SOCIALS.discord}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`flex flex-col items-center gap-2 text-storm-muted transition-colors duration-300 ${social.color}`}
+                className="inline-flex items-center justify-center gap-3 px-7 py-3.5 bg-storm-red hover:bg-storm-red-dark text-white font-bold rounded-xl transition-all duration-300 glow-btn hover:scale-105"
               >
-                <Icon className="w-6 h-6" />
-                <span className="text-xs tracking-widest uppercase">
-                  {social.name}
-                </span>
+                <DiscordIcon className="w-5 h-5" />
+                Join Our Discord
               </a>
-            );
-          })}
+              <a
+                href={SOCIALS.founderDiscord}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-3 px-7 py-3.5 border border-storm-red/30 text-storm-light hover:text-white hover:border-storm-red/70 hover:bg-storm-red/10 font-bold rounded-xl transition-all duration-300"
+              >
+                <DiscordIcon className="w-5 h-5 text-storm-red" />
+                DM the Founder
+              </a>
+            </div>
+
+            {/* Email */}
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="contact-animate mt-6 text-sm text-storm-muted hover:text-storm-red transition-colors duration-300 tracking-wide"
+            >
+              {CONTACT_EMAIL}
+            </a>
+
+            {/* Social links */}
+            <div className="contact-animate flex items-center gap-8 mt-8">
+              {socialLinks.map((social) => {
+                const Icon = social.icon;
+                return (
+                  <a
+                    key={social.name}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`flex flex-col items-center gap-2 text-storm-muted transition-colors duration-300 ${social.color}`}
+                  >
+                    <Icon className="w-6 h-6" />
+                    <span className="text-xs tracking-widest uppercase">
+                      {social.name}
+                    </span>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Right — the quotation / hire / join form */}
+          <div id="contact-form" className="contact-animate scroll-mt-24">
+            <ContactForm />
+          </div>
         </div>
 
         {/* Decorative divider */}
-        <div className="contact-animate w-16 h-px bg-gradient-to-r from-transparent via-storm-red/40 to-transparent mt-16 mb-8" />
+        <div className="contact-animate w-16 h-px bg-gradient-to-r from-transparent via-storm-red/40 to-transparent mt-16 mb-8 mx-auto" />
 
         {/* Footer */}
         <footer className="contact-animate text-center">

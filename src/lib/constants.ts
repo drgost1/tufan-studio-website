@@ -136,7 +136,34 @@ export const SOCIALS = {
   discord: "https://discord.gg/tufanstudio",
   youtube: "https://youtube.com/@tufanstudio_ts",
   tebex: "https://tufanstudio.tebex.io/",
+  founderDiscord: "https://discord.com/users/1215664354620608613",
 } as const;
+
+export const CONTACT_EMAIL = "info@tufanstudio.net";
+
+// ======================== //
+// CONTACT / QUOTATION FORM //
+// ======================== //
+// Shared by the form UI and the API route so a value can never drift between
+// what the dropdown offers and what the server accepts.
+
+export const PROJECT_TYPES = [
+  "FiveM Server Setup",
+  "FiveM Script / Resource",
+  "GTA V Cinematic",
+  "Website / Web App",
+  "3D Modeling / Level Design",
+  "Join the Team",
+  "Something Else",
+] as const;
+
+export const BUDGET_RANGES = [
+  "Under $100",
+  "$100 – $500",
+  "$500 – $1,500",
+  "$1,500+",
+  "Not sure yet",
+] as const;
 
 // ======================== //
 // TUFAN TERMINAL PRODUCT   //

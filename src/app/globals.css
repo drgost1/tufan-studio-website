@@ -48,6 +48,18 @@ h1, h2, h3, .font-heading {
   overflow: clip;
 }
 
+/* Mandatory snap only works when every section actually fits the viewport.
+   On a phone several do not — the team grid stacks to six cards and the
+   contact section carries the form — and snapping then yanks the reader back
+   to the section start, making the bottom of those sections unreachable on a
+   flick scroll. The deck is a desktop conceit; below lg it scrolls normally.
+   (Verified: contact still fits within 900px height at 1024px wide and up.) */
+@media (max-width: 1023px) {
+  .scroll-container {
+    scroll-snap-type: none;
+  }
+}
+
 /* ======================== */
 /* NOISE TEXTURE OVERLAY    */
 /* ======================== */
