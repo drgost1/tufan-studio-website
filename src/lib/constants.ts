@@ -44,6 +44,7 @@ export const PORTFOLIO_ITEMS = [
     description: "Full-stack server management and infrastructure solutions",
     image: "/images/portfolio-fivem-server.png",
     link: "https://tufanstudio.tebex.io/",
+    linkLabel: null,
     comingSoon: false,
   },
   {
@@ -52,6 +53,7 @@ export const PORTFOLIO_ITEMS = [
     description: "Custom scripts, resources, and server development",
     image: "/images/portfolio-fivem-dev.png",
     link: "https://tufanstudio.tebex.io/",
+    linkLabel: null,
     comingSoon: false,
   },
   {
@@ -60,6 +62,16 @@ export const PORTFOLIO_ITEMS = [
     description: "GTA V-style and ancient cinema video productions",
     image: "/images/portfolio-cinematics.png",
     link: "https://youtube.com/@tufanstudio_ts",
+    linkLabel: null,
+    comingSoon: false,
+  },
+  {
+    title: "Digital Products House",
+    category: "E-Commerce",
+    description: "Our digital shop for Bangladesh — game top ups, gift cards and subscriptions, paid with bKash",
+    image: "/images/portfolio-dph.jpg",
+    link: "https://digitalproductshouse.tufanstudio.net/",
+    linkLabel: "Visit Digital Products House",
     comingSoon: false,
   },
   {
@@ -68,6 +80,7 @@ export const PORTFOLIO_ITEMS = [
     description: "Something massive is brewing in the storm",
     image: "/images/portfolio-coming1.png",
     link: null,
+    linkLabel: null,
     comingSoon: true,
   },
   {
@@ -76,6 +89,7 @@ export const PORTFOLIO_ITEMS = [
     description: "Stay tuned for the next chapter",
     image: "/images/portfolio-coming2.png",
     link: null,
+    linkLabel: null,
     comingSoon: true,
   },
 ] as const;

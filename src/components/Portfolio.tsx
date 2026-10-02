@@ -233,7 +233,7 @@ export default function Portfolio() {
                       className="mt-3 inline-flex items-center gap-1.5 text-sm text-storm-red hover:text-storm-red-light transition-colors"
                       onMouseDown={(e) => e.stopPropagation()}
                     >
-                      View Project
+                      {item.linkLabel ?? "View Project"}
                       <ExternalLinkIcon className="w-3.5 h-3.5" />
                     </a>
                   )}
