@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { PORTFOLIO_ITEMS } from "@/lib/constants";
+import { useTilt } from "@/lib/usePointerFx";
 import { DiamondIcon, ExternalLinkIcon } from "./Icons";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -12,6 +14,7 @@ export default function Portfolio() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const tiltRef = useTilt(".tilt", 7);
   const isDragging = useRef(false);
   const startX = useRef(0);
   const scrollLeft = useRef(0);
@@ -128,17 +131,13 @@ export default function Portfolio() {
     >
       {/* Background accent */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-storm-red/20 to-transparent" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_60%,rgba(230,57,70,0.08),transparent_60%)] pointer-events-none" />
+      <span aria-hidden="true" className="section-watermark">WORK</span>
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6">
         {/* Title */}
         <div ref={titleRef} className="text-center mb-10 sm:mb-16">
-          <div className="flex items-center justify-center gap-4 mb-4">
-            <DiamondIcon className="text-storm-red w-2 h-2" />
-            <span className="text-sm tracking-[0.3em] uppercase text-storm-red font-medium">
-              Portfolio
-            </span>
-            <DiamondIcon className="text-storm-red w-2 h-2" />
-          </div>
+          <span className="hud-kicker mb-4">Portfolio</span>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-storm-light">
             OUR{" "}
             <span className="text-storm-red">CREATIONS</span>
@@ -146,7 +145,7 @@ export default function Portfolio() {
         </div>
 
         {/* Carousel wrapper */}
-        <div className="relative">
+        <div ref={tiltRef} className="relative">
           {/* Left arrow */}
           <button
             onClick={() => scrollBy("left")}
@@ -180,20 +179,25 @@ export default function Portfolio() {
           {/* Horizontal scroll carousel */}
           <div
             ref={scrollRef}
-            className="horizontal-scroll gap-6 pb-6 px-4 cursor-grab"
+            className="horizontal-scroll gap-6 pt-4 pb-6 px-4 cursor-grab"
           >
             {PORTFOLIO_ITEMS.map((item, index) => (
               <div
                 key={index}
-                className="portfolio-card card-shimmer relative w-[300px] sm:w-[400px] aspect-[16/10] rounded-2xl overflow-hidden group select-none"
+                className="portfolio-card relative w-[300px] sm:w-[400px] aspect-[16/10] select-none"
               >
+              <div className="tilt spin-border before:z-30 card-shimmer absolute inset-0 rounded-2xl overflow-hidden group ring-1 ring-white/5">
+                <span className="tilt-glare" aria-hidden="true" />
                 {/* Background image */}
                 <div className="absolute inset-0">
                   {item.image && (
-                    <img
+                    <Image
                       src={item.image}
                       alt={item.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      fill
+                      sizes="(min-width: 640px) 400px, 300px"
+                      draggable={false}
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
                     />
                   )}
                   {/* Gradient overlay */}
@@ -238,6 +242,7 @@ export default function Portfolio() {
                     </a>
                   )}
                 </div>
+              </div>
               </div>
             ))}
           </div>

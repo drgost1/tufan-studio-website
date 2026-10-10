@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TEAM_MEMBERS } from "@/lib/constants";
-import { DiamondIcon } from "./Icons";
+import { useTilt } from "@/lib/usePointerFx";
 import KitsuneLogo from "./KitsuneLogo";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -28,6 +28,7 @@ export default function Team() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
+  const tiltRef = useTilt(".tilt", 10);
 
   useEffect(() => {
     const container = document.querySelector(".scroll-container");
@@ -78,17 +79,12 @@ export default function Team() {
       {/* Background pattern */}
       <div className="absolute inset-0 bg-cover bg-center opacity-40" style={{ backgroundImage: "url('/images/team-bg.png')" }} />
       <div className="absolute inset-0 bg-gradient-to-b from-storm-black via-transparent to-storm-black" />
+      <span aria-hidden="true" className="section-watermark">PACK</span>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 w-full">
+      <div ref={tiltRef} className="relative z-10 max-w-6xl mx-auto px-6 w-full">
         {/* Title */}
         <div ref={titleRef} className="text-center mb-16">
-          <div className="flex items-center justify-center gap-4 mb-4">
-            <DiamondIcon className="text-storm-red w-2 h-2" />
-            <span className="text-sm tracking-[0.3em] uppercase text-storm-red font-medium">
-              Our Team
-            </span>
-            <DiamondIcon className="text-storm-red w-2 h-2" />
-          </div>
+          <span className="hud-kicker mb-4">Our Team</span>
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-storm-light">
             THE{" "}
             <span className="text-storm-red">PACK</span>
@@ -108,7 +104,8 @@ export default function Team() {
               key={member.name}
               className="team-card group relative"
             >
-              <div className="relative w-72 h-full bg-storm-gray/50 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col items-center text-center transition-all duration-500 hover:border-storm-red/30 hover:shadow-[0_0_40px_rgba(230,57,70,0.1)]">
+              <div className="tilt spin-border before:z-30 relative w-72 h-full bg-storm-gray/50 backdrop-blur-sm border border-white/5 rounded-2xl p-8 flex flex-col items-center text-center transition-[border-color,box-shadow] duration-500 hover:border-storm-red/20 hover:shadow-[0_20px_50px_rgba(230,57,70,0.15)] overflow-hidden">
+                <span className="tilt-glare" aria-hidden="true" />
                 {/* Avatar with kitsune frame */}
                 <div className="relative mb-6">
                   <div className="w-24 h-24 rounded-full bg-storm-dark flex items-center justify-center overflow-hidden border-2 border-storm-red/20 group-hover:border-storm-red/50 transition-colors duration-300">

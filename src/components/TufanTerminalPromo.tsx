@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { TUFAN_TERMINAL } from "@/lib/constants";
 import { useReveal } from "@/lib/useReveal";
-import { DiamondIcon, DownloadIcon } from "./Icons";
+import { DownloadIcon } from "./Icons";
 
 export default function TufanTerminalPromo() {
   const contentRef = useReveal<HTMLDivElement>({
@@ -24,11 +24,8 @@ export default function TufanTerminalPromo() {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center min-w-0">
           {/* Copy */}
           <div ref={contentRef} className="min-w-0">
-            <div className="promo-line flex items-center gap-3 mb-4">
-              <DiamondIcon className="text-storm-red w-2 h-2" />
-              <span className="text-sm tracking-[0.3em] uppercase text-storm-red font-medium">
-                Our Own Creation
-              </span>
+            <div className="promo-line mb-4">
+              <span className="hud-kicker">Our Own Creation</span>
             </div>
 
             <h2 className="promo-line text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-storm-light mb-5">
@@ -47,7 +44,7 @@ export default function TufanTerminalPromo() {
               <a
                 href={TUFAN_TERMINAL.downloadUrl}
                 download
-                className="glow-btn inline-flex items-center gap-2.5 px-7 py-3.5 bg-storm-red hover:bg-storm-red-dark text-white text-sm sm:text-base font-bold rounded-xl transition-all duration-300 hover:scale-[1.03]"
+                className="sheen glow-btn inline-flex items-center gap-2.5 px-7 py-3.5 bg-storm-red hover:bg-storm-red-dark text-white text-sm sm:text-base font-bold rounded-xl transition-all duration-300 hover:scale-[1.03]"
               >
                 <DownloadIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                 Download

@@ -24,7 +24,7 @@ export default function MusicPlayer() {
       } else {
         setAsked(true);
       }
-    }, 3000);
+    }, 6500);
     return () => clearTimeout(timer);
   }, []);
 

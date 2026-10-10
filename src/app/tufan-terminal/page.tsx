@@ -37,10 +37,10 @@ export const metadata: Metadata = {
     locale: "en_US",
     images: [
       {
-        url: "/images/og-banner.png",
-        width: 640,
-        height: 640,
-        alt: "Tufan Terminal — One window. Every shell. Zero chaos.",
+        url: "/images/tufan-terminal-screenshot.png",
+        width: 1394,
+        height: 894,
+        alt: "Tufan Terminal with a projects sidebar and split terminal panes",
       },
     ],
   },
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     title: "Tufan Terminal — One window. Every shell. Zero chaos.",
     description:
       "A free, GPU-accelerated Windows terminal workspace built by Tufan Studio. Download free, auto-updates.",
-    images: ["/images/og-banner.png"],
+    images: ["/images/tufan-terminal-screenshot.png"],
   },
 };
 

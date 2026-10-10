@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import MusicPlayer from "@/components/MusicPlayer";
 import ClickBurst from "@/components/ClickBurst";
+import { BRAND, CONTACT_EMAIL, SOCIALS } from "@/lib/constants";
 import "./globals.css";
 
 // Display font for headings — bold, cinematic
@@ -25,69 +26,98 @@ const body = Inter({
   subsets: ["latin"],
 });
 
+const SITE_URL = "https://www.tufanstudio.net";
+const SITE_TITLE = "Tufan Studio — FiveM Servers, Scripts, GTA V Cinematics & Web";
+const SITE_DESCRIPTION =
+  "Tufan Studio is a game development and digital studio. We build FiveM servers, sell market-ready FiveM scripts, produce GTA V-style cinematics, make Roblox games and craft high-end websites. We are the storm.";
+const SHARE_DESCRIPTION =
+  "Game development, FiveM servers & scripts, GTA V cinematics, Roblox and web — crafted with the force of a storm.";
+
+export const viewport: Viewport = {
+  themeColor: "#0A0A0A",
+  colorScheme: "dark",
+};
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.tufanstudio.net"),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "Tufan Studio | We Are The Storm",
+    default: SITE_TITLE,
     template: "%s | Tufan Studio",
   },
-  description:
-    "Tufan Studio is a game development and digital services studio. We build FiveM servers, create GTA V-style cinematics, develop market-ready scripts, and craft high-end websites. We are the storm.",
+  description: SITE_DESCRIPTION,
+  applicationName: BRAND.name,
   keywords: [
     "Tufan Studio",
-    "game development",
-    "FiveM server",
+    "game development studio",
+    "FiveM server development",
     "FiveM scripts",
+    "FiveM server setup",
+    "Qbox scripts",
+    "QBCore scripts",
     "GTA V cinematics",
     "Roblox game development",
     "web development",
     "game server management",
-    "gaming community",
     "3D modeling",
     "level design",
-    "graphic design",
-    "digital studio",
   ],
-  authors: [{ name: "Tufan Studio" }],
-  creator: "Tufan Studio",
-  publisher: "Tufan Studio",
+  authors: [{ name: BRAND.name, url: SITE_URL }],
+  creator: BRAND.name,
+  publisher: BRAND.name,
+  category: "technology",
   robots: {
     index: true,
     follow: true,
-    googleBot: { index: true, follow: true },
-  },
-  icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
-    shortcut: "/logo.png",
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
   },
   alternates: {
     canonical: "/",
   },
+  // Icons and the share image come from the file conventions in app/
+  // (favicon.ico, icon.png, apple-icon.png, opengraph-image.tsx).
   openGraph: {
-    title: "Tufan Studio | We Are The Storm",
-    description:
-      "Game development, FiveM servers, GTA V cinematics, and web development — crafted with the force of a storm.",
-    url: "https://www.tufanstudio.net",
+    title: `${BRAND.name} | ${BRAND.tagline}`,
+    description: SHARE_DESCRIPTION,
+    url: SITE_URL,
     type: "website",
-    siteName: "Tufan Studio",
+    siteName: BRAND.name,
     locale: "en_US",
-    images: [
-      {
-        url: "/images/og-banner.png",
-        width: 640,
-        height: 640,
-        alt: "Tufan Studio - We Are The Storm",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Tufan Studio | We Are The Storm",
-    description:
-      "Game development, FiveM servers, GTA V cinematics, and web development — crafted with the force of a storm.",
-    images: ["/images/og-banner.png"],
+    title: `${BRAND.name} | ${BRAND.tagline}`,
+    description: SHARE_DESCRIPTION,
   },
+};
+
+// Organization + WebSite structured data — gives Google the brand name, logo
+// and official profiles for the knowledge panel / site-name line in results.
+const JSON_LD = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      name: BRAND.name,
+      alternateName: ["Tufan", "Tufan Studio TS"],
+      url: SITE_URL,
+      logo: { "@type": "ImageObject", url: `${SITE_URL}/icon-512.png`, width: 512, height: 512 },
+      slogan: BRAND.tagline,
+      description: SITE_DESCRIPTION,
+      email: CONTACT_EMAIL,
+      sameAs: [SOCIALS.youtube, SOCIALS.tebex, SOCIALS.discord],
+      knowsAbout: ["FiveM", "GTA V", "Roblox", "Game development", "Web development", "3D modeling"],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      name: BRAND.name,
+      alternateName: "Tufan",
+      url: SITE_URL,
+      publisher: { "@id": `${SITE_URL}/#organization` },
+      inLanguage: "en",
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -101,6 +131,10 @@ export default function RootLayout({
       className={`${heading.variable} ${body.variable} h-full antialiased`}
     >
       <body className="h-full overflow-hidden">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD).replace(/</g, "\\u003c") }}
+        />
         {/* Lives in the layout so audio survives route changes — pages remount, layouts don't */}
         <MusicPlayer />
         {/* Global so the click feedback survives route changes, same as the audio */}

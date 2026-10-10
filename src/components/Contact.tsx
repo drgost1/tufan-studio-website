@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { BRAND, SOCIALS, CONTACT_EMAIL } from "@/lib/constants";
-import { DiscordIcon, YoutubeIcon, ShoppingBagIcon, DiamondIcon } from "./Icons";
+import { DiscordIcon, YoutubeIcon, ShoppingBagIcon } from "./Icons";
 import KitsuneLogo from "./KitsuneLogo";
 import FloatingEmbers from "./FloatingEmbers";
 import ContactForm from "./ContactForm";
@@ -68,6 +68,7 @@ export default function Contact() {
         <div className="absolute inset-0 diamond-grid opacity-30" />
       </div>
 
+      <span aria-hidden="true" className="section-watermark">STORM</span>
       <FloatingEmbers count={18} />
 
       {/* Top border line */}
@@ -83,12 +84,8 @@ export default function Contact() {
           {/* Left — pitch and the direct channels */}
           <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
             {/* Label */}
-            <div className="contact-animate flex items-center gap-3 mb-6">
-              <DiamondIcon className="text-storm-red w-2 h-2" />
-              <span className="text-sm tracking-[0.3em] uppercase text-storm-red font-medium">
-                Get In Touch
-              </span>
-              <DiamondIcon className="text-storm-red w-2 h-2" />
+            <div className="contact-animate mb-6">
+              <span className="hud-kicker">Get In Touch</span>
             </div>
 
             {/* Title */}
@@ -107,7 +104,7 @@ export default function Contact() {
                 href={SOCIALS.discord}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-3 px-7 py-3.5 bg-storm-red hover:bg-storm-red-dark text-white font-bold rounded-xl transition-all duration-300 glow-btn hover:scale-105"
+                className="sheen inline-flex items-center justify-center gap-3 px-7 py-3.5 bg-storm-red hover:bg-storm-red-dark text-white font-bold rounded-xl transition-all duration-300 glow-btn hover:scale-105"
               >
                 <DiscordIcon className="w-5 h-5" />
                 Join Our Discord

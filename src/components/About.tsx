@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { BRAND, STATS } from "@/lib/constants";
-import { DiamondIcon } from "./Icons";
+import StormBand from "./StormBand";
 import KitsuneLogo from "./KitsuneLogo";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -99,25 +99,28 @@ export default function About() {
     <section
       ref={sectionRef}
       id="about"
-      className="scroll-section flex flex-col items-center justify-center bg-storm-light relative py-20 overflow-hidden"
+      className="scroll-section flex flex-col items-center justify-center bg-storm-light relative pt-44 pb-14 lg:pt-40 overflow-hidden"
     >
-      {/* Decorative background */}
-      <div className="absolute top-10 right-10 opacity-[0.03] pointer-events-none">
-        <KitsuneLogo size={500} />
+      <div className="absolute top-16 left-0 right-0 z-20">
+        <StormBand />
       </div>
+      <span aria-hidden="true" className="section-watermark section-watermark--light">TUFAN</span>
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Left: Visual */}
           <div className="relative">
-            <div className="aspect-square max-w-md mx-auto relative">
-              {/* Decorative frame */}
-              <div className="absolute inset-4 border-2 border-storm-red/20 rounded-2xl" />
-              <div className="absolute inset-0 bg-gradient-to-br from-storm-red/5 to-transparent rounded-2xl" />
+            <div className="aspect-square max-w-[19rem] sm:max-w-sm mx-auto relative">
+              {/* Glow + orbiting rings */}
+              <div className="absolute inset-[18%] rounded-full bg-[radial-gradient(circle,rgba(230,57,70,0.28),transparent_70%)] blur-2xl" />
+              <div className="orbit-ring orbit-ring--outer" />
+              <div className="orbit-ring" />
 
               {/* Centered logo */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <KitsuneLogo size={200} className="drop-shadow-2xl" />
+                <div className="mask-breathe">
+                  <KitsuneLogo size={190} className="w-40 h-40 sm:w-[190px] sm:h-[190px] drop-shadow-[0_24px_40px_rgba(193,18,31,0.35)]" />
+                </div>
               </div>
 
               {/* Corner accents */}
@@ -130,11 +133,8 @@ export default function About() {
 
           {/* Right: Text */}
           <div ref={contentRef}>
-            <div className="about-line flex items-center gap-3 mb-3">
-              <DiamondIcon className="text-storm-red w-2 h-2" />
-              <span className="text-sm tracking-[0.3em] uppercase text-storm-red font-medium">
-                About Us
-              </span>
+            <div className="about-line mb-3">
+              <span className="hud-kicker">About Us</span>
             </div>
 
             <h2 className="about-line text-4xl sm:text-5xl font-black tracking-tight text-storm-black mb-6">
@@ -159,7 +159,7 @@ export default function About() {
         </div>
 
         {/* Stats strip */}
-        <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 pt-12 border-t border-storm-black/10">
+        <div className="mt-12 lg:mt-14 grid grid-cols-2 md:grid-cols-4 gap-8 pt-10 border-t border-storm-black/10">
           {STATS.map((stat) => (
             <AnimatedCounter
               key={stat.label}
