@@ -66,15 +66,6 @@ export const PORTFOLIO_ITEMS = [
     comingSoon: false,
   },
   {
-    title: "Digital Products House",
-    category: "E-Commerce",
-    description: "Our digital shop for Bangladesh — game top ups, gift cards and subscriptions, paid with bKash",
-    image: "/images/portfolio-dph.jpg",
-    link: "https://digitalproductshouse.tufanstudio.net/",
-    linkLabel: "Visit Digital Products House",
-    comingSoon: false,
-  },
-  {
     title: "Next Creation",
     category: "Coming Soon",
     description: "Something massive is brewing in the storm",
