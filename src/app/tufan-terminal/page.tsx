@@ -6,6 +6,30 @@ import TerminalHero from "@/components/terminal/TerminalHero";
 import TerminalFeatures from "@/components/terminal/TerminalFeatures";
 import TerminalWhy from "@/components/terminal/TerminalWhy";
 import TerminalCTA from "@/components/terminal/TerminalCTA";
+import { TUFAN_TERMINAL } from "@/lib/constants";
+
+const PAGE_URL = "https://www.tufanstudio.net/tufan-terminal";
+const SCREENSHOT_URL = "https://www.tufanstudio.net/images/tufan-terminal-screenshot.png";
+
+// SoftwareApplication data — lets Google read this page as a free Windows app listing
+// (price, OS, download) instead of a plain article. Publisher points at the
+// Organization node the root layout already emits.
+const JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: TUFAN_TERMINAL.name,
+  description: TUFAN_TERMINAL.subhead,
+  url: PAGE_URL,
+  downloadUrl: TUFAN_TERMINAL.downloadUrl,
+  applicationCategory: "DeveloperApplication",
+  operatingSystem: "Windows 10, Windows 11",
+  fileSize: "6MB",
+  image: SCREENSHOT_URL,
+  screenshot: SCREENSHOT_URL,
+  isAccessibleForFree: true,
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  publisher: { "@id": "https://www.tufanstudio.net/#organization" },
+};
 
 export const metadata: Metadata = {
   title: "Tufan Terminal",
@@ -58,6 +82,10 @@ export default function TufanTerminalPage() {
     <>
       <CustomCursor />
       <ScrollProgress />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD).replace(/</g, "\\u003c") }}
+      />
 
       {/* Film grain noise overlay */}
       <div className="noise-overlay" />
