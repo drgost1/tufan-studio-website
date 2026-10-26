@@ -97,7 +97,7 @@ export const PORTFOLIO_ITEMS = [
   {
     title: "Digital Products House",
     category: "E-Commerce",
-    description: "A digital-goods storefront we built — walk-in 3D shop, bKash-style checkout and admin panel. A showcase with fictional products",
+    description: "A digital-goods storefront we built — walk-in 3D shop, bKash-style checkout and admin panel. Showcase with fictional products, and the website is for sale",
     image: "/images/portfolio-dph.jpg",
     link: "https://digitalproductshouse.tufanstudio.net/",
     linkLabel: "View the showcase",
@@ -197,6 +197,7 @@ export const PROJECT_TYPES = [
   "Website / Web App",
   "3D Modeling / Level Design",
   "Join the Team",
+  "Buy the DPH Website",
   "Something Else",
 ] as const;
 
