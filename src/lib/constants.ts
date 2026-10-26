@@ -95,6 +95,15 @@ export const PORTFOLIO_ITEMS = [
     comingSoon: false,
   },
   {
+    title: "Digital Products House",
+    category: "E-Commerce",
+    description: "A digital-goods storefront we built — walk-in 3D shop, bKash-style checkout and admin panel. A showcase with fictional products",
+    image: "/images/portfolio-dph.jpg",
+    link: "https://digitalproductshouse.tufanstudio.net/",
+    linkLabel: "View the showcase",
+    comingSoon: false,
+  },
+  {
     title: "Next Creation",
     category: "Coming Soon",
     description: "Something massive is brewing in the storm",
