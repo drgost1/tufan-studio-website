@@ -175,8 +175,12 @@ export const STATS = [
   { label: "Lines of Code", value: 50, suffix: "K+" },
 ] as const;
 
+// Written as people read it; the wa.me link below strips it to digits
+export const CONTACT_WHATSAPP = "+880 1911-579336";
+
 export const SOCIALS = {
   discord: "https://discord.gg/tufanstudiocommonserver",
+  whatsapp: `https://wa.me/${CONTACT_WHATSAPP.replace(/\D/g, "")}`,
   youtube: "https://youtube.com/@tufanstudio_ts",
   tebex: "https://tufanstudio.tebex.io/",
   founderDiscord: "https://discord.com/users/1215664354620608613",

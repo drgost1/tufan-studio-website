@@ -3,8 +3,8 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { BRAND, SOCIALS, CONTACT_EMAIL } from "@/lib/constants";
-import { DiscordIcon, YoutubeIcon, ShoppingBagIcon } from "./Icons";
+import { BRAND, SOCIALS, CONTACT_EMAIL, CONTACT_WHATSAPP } from "@/lib/constants";
+import { DiscordIcon, WhatsappIcon, YoutubeIcon, ShoppingBagIcon } from "./Icons";
 import KitsuneLogo from "./KitsuneLogo";
 import FloatingEmbers from "./FloatingEmbers";
 import ContactForm from "./ContactForm";
@@ -95,16 +95,17 @@ export default function Contact() {
 
             <p className="contact-animate text-lg text-storm-muted mb-8 max-w-md">
               Want to hire us, or want to build with us? Fill the form — it lands
-              straight in our inbox. Prefer to talk first? The Discord is always open.
+              straight in our inbox. Prefer to talk first? WhatsApp us, or the
+              Discord is always open.
             </p>
 
-            {/* Direct channels */}
+            {/* Direct channels — three in a row only fits the xl column with tighter padding */}
             <div className="contact-animate flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-3 w-full sm:w-auto">
               <a
                 href={SOCIALS.discord}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="sheen inline-flex items-center justify-center gap-3 px-7 py-3.5 bg-storm-red hover:bg-storm-red-dark text-white font-bold rounded-xl transition-all duration-300 glow-btn hover:scale-105"
+                className="sheen inline-flex items-center justify-center gap-3 px-7 xl:px-5 py-3.5 bg-storm-red hover:bg-storm-red-dark text-white font-bold rounded-xl transition-all duration-300 glow-btn hover:scale-105"
               >
                 <DiscordIcon className="w-5 h-5" />
                 Join Our Discord
@@ -113,20 +114,40 @@ export default function Contact() {
                 href={SOCIALS.founderDiscord}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-3 px-7 py-3.5 border border-storm-red/30 text-storm-light hover:text-white hover:border-storm-red/70 hover:bg-storm-red/10 font-bold rounded-xl transition-all duration-300"
+                className="inline-flex items-center justify-center gap-3 px-7 xl:px-5 py-3.5 border border-storm-red/30 text-storm-light hover:text-white hover:border-storm-red/70 hover:bg-storm-red/10 font-bold rounded-xl transition-all duration-300"
               >
                 <DiscordIcon className="w-5 h-5 text-storm-red" />
                 DM Us
               </a>
+              <a
+                href={SOCIALS.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-3 px-7 xl:px-5 py-3.5 border border-[#25D366]/30 text-storm-light hover:text-white hover:border-[#25D366]/70 hover:bg-[#25D366]/10 font-bold rounded-xl transition-all duration-300"
+              >
+                <WhatsappIcon className="w-5 h-5 text-[#25D366]" />
+                WhatsApp
+              </a>
             </div>
 
-            {/* Email */}
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="contact-animate mt-6 text-sm text-storm-muted hover:text-storm-red transition-colors duration-300 tracking-wide"
-            >
-              {CONTACT_EMAIL}
-            </a>
+            {/* Email and phone, in plain text for anyone who wants to copy them */}
+            <div className="contact-animate mt-6 flex flex-wrap items-center justify-center lg:justify-start gap-x-3 gap-y-1 text-sm text-storm-muted tracking-wide">
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                className="hover:text-storm-red transition-colors duration-300"
+              >
+                {CONTACT_EMAIL}
+              </a>
+              <span aria-hidden="true" className="text-storm-muted/40">·</span>
+              <a
+                href={SOCIALS.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-[#25D366] transition-colors duration-300"
+              >
+                {CONTACT_WHATSAPP}
+              </a>
+            </div>
 
             {/* Social links */}
             <div className="contact-animate flex items-center gap-8 mt-8">

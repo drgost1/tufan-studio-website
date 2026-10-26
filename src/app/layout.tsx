@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import MusicPlayer from "@/components/MusicPlayer";
 import ClickBurst from "@/components/ClickBurst";
-import { BRAND, CONTACT_EMAIL, SOCIALS } from "@/lib/constants";
+import { BRAND, CONTACT_EMAIL, CONTACT_WHATSAPP, SOCIALS } from "@/lib/constants";
 import "./globals.css";
 
 // Display font for headings — bold, cinematic
@@ -105,6 +105,7 @@ const JSON_LD = {
       slogan: BRAND.tagline,
       description: SITE_DESCRIPTION,
       email: CONTACT_EMAIL,
+      telephone: CONTACT_WHATSAPP.replace(/[\s-]/g, ""),
       sameAs: [SOCIALS.youtube, SOCIALS.tebex, SOCIALS.discord],
       knowsAbout: ["FiveM", "GTA V", "Roblox", "Game development", "Web development", "3D modeling"],
     },
