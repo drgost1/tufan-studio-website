@@ -109,11 +109,11 @@ export const SERVICE_PAGES: Record<ServiceSlug, ServicePageContent> = {
         title: "Aircraft Carrier Heist",
         label: "On Tebex",
         description:
-          "Our standalone heist script, with cutscenes and server-side validation. Watch the showcase, then buy it from the store.",
+          "Our standalone heist script, with cutscenes and server-side validation, on sale now in our Tebex store.",
         image: "/images/portfolio-fivem-dev.png",
         imageAlt: "Tufan Studio FiveM development artwork",
-        href: "https://www.youtube.com/watch?v=HPc8FinCc58",
-        linkLabel: "Watch the showcase",
+        href: "https://tufanstudio.tebex.io/category/scripts",
+        linkLabel: "See it on Tebex",
       },
       {
         title: "tufan bridge",
