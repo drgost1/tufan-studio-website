@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
 const MUSIC_TRACKS = [
@@ -15,18 +16,21 @@ export default function MusicPlayer() {
   const [currentTrack, setCurrentTrack] = useState(0);
   const [volume, setVolume] = useState(15);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     const timer = setTimeout(() => {
       const prompted = sessionStorage.getItem("music-prompted");
-      if (!prompted) {
+      // Only the home page asks: a full-screen prompt would interrupt someone
+      // reading a service page they found through search.
+      if (!prompted && pathname === "/") {
         setShowPrompt(true);
       } else {
         setAsked(true);
       }
     }, 6500);
     return () => clearTimeout(timer);
-  }, []);
+  }, [pathname]);
 
   // Detached Audio objects keep playing after unmount unless explicitly stopped
   useEffect(() => {

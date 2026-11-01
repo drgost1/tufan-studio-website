@@ -14,10 +14,10 @@ const FIELD_CLASS =
 const LABEL_CLASS =
   "block text-[11px] tracking-[0.18em] uppercase text-storm-muted mb-2 font-medium";
 
-export default function ContactForm() {
+export default function ContactForm({ defaultType = PROJECT_TYPES[0] }: { defaultType?: string }) {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
-  const [projectType, setProjectType] = useState<string>(PROJECT_TYPES[0]);
+  const [projectType, setProjectType] = useState<string>(defaultType);
 
   // The "Join The Pack" card deep-links here — honour ?type= on arrival so the
   // dropdown already says what the visitor clicked
@@ -78,7 +78,7 @@ export default function ContactForm() {
       }
 
       form.reset();
-      setProjectType(PROJECT_TYPES[0]);
+      setProjectType(defaultType);
       setStatus("sent");
     } catch {
       setError(`Network error. Please email ${CONTACT_EMAIL} directly.`);

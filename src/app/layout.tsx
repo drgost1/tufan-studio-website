@@ -108,6 +108,12 @@ const JSON_LD = {
       telephone: CONTACT_WHATSAPP.replace(/[\s-]/g, ""),
       sameAs: [SOCIALS.youtube, SOCIALS.tebex, SOCIALS.discord],
       knowsAbout: ["FiveM", "GTA V", "Roblox", "Game development", "Web development", "3D modeling"],
+      founder: {
+        "@type": "Person",
+        name: "Nafis Iqbal",
+        jobTitle: "Founder and lead developer",
+        sameAs: [SOCIALS.linkedin, SOCIALS.github],
+      },
       hasOfferCatalog: {
         "@type": "OfferCatalog",
         name: `${BRAND.name} services`,

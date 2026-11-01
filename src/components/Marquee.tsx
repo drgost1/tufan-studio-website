@@ -11,8 +11,8 @@ const ITEMS = [
   "COMMUNITY MANAGEMENT",
 ];
 
-export default function Marquee() {
-  const content = ITEMS.map((item) => (
+export default function Marquee({ items = ITEMS }: { items?: readonly string[] }) {
+  const content = items.map((item) => (
     <span key={item} className="flex items-center gap-6 shrink-0">
       <span className="text-sm sm:text-base font-bold tracking-[0.2em] uppercase text-storm-light/80">
         {item}

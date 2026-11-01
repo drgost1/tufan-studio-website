@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import KitsuneLogo from "./KitsuneLogo";
 import { NAV_LINKS, SOCIALS } from "@/lib/constants";
+import { SERVICE_PAGE_LIST } from "@/lib/servicePages";
 import { DiscordIcon, MenuIcon, CloseIcon } from "./Icons";
 
 export default function Navigation() {
@@ -14,6 +15,7 @@ export default function Navigation() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === "/";
+  const isServicePage = SERVICE_PAGE_LIST.some((service) => pathname === `/${service.slug}`);
 
   useEffect(() => {
     const container = document.querySelector(".scroll-container");
@@ -149,6 +151,40 @@ export default function Navigation() {
               );
             })}
 
+            {/* Hire menu: opens on hover and on keyboard focus */}
+            <div className="relative group/hire">
+              <button
+                type="button"
+                aria-haspopup="true"
+                className={`flex items-center gap-1.5 text-sm font-medium tracking-wide transition-colors duration-300 ${
+                  isServicePage ? "text-storm-light" : "text-storm-muted hover:text-storm-light"
+                }`}
+              >
+                Hire Us
+                <span
+                  aria-hidden="true"
+                  className="text-[10px] transition-transform duration-300 group-hover/hire:rotate-180 group-focus-within/hire:rotate-180"
+                >
+                  &#9662;
+                </span>
+              </button>
+              <div className="invisible absolute left-1/2 top-full z-10 w-56 -translate-x-1/2 pt-4 opacity-0 transition-all duration-200 group-hover/hire:visible group-hover/hire:opacity-100 group-focus-within/hire:visible group-focus-within/hire:opacity-100">
+                <div className="overflow-hidden rounded-xl border border-white/10 bg-storm-black/95 p-2 shadow-2xl shadow-black/70 backdrop-blur-xl">
+                  {SERVICE_PAGE_LIST.map((service) => (
+                    <Link
+                      key={service.slug}
+                      href={`/${service.slug}`}
+                      className={`block rounded-lg px-3 py-2.5 text-sm font-medium transition-colors duration-200 hover:bg-storm-red/15 hover:text-storm-light ${
+                        pathname === `/${service.slug}` ? "text-storm-red-light" : "text-storm-muted"
+                      }`}
+                    >
+                      {service.navLabel}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             {/* Discord CTA */}
             <a
               href={SOCIALS.discord}
@@ -178,14 +214,14 @@ export default function Navigation() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-storm-black/95 backdrop-blur-2xl flex flex-col items-center justify-center"
+            className="fixed inset-0 z-50 bg-storm-black/95 backdrop-blur-2xl flex flex-col items-center overflow-y-auto py-20"
           >
             {/* Background kitsune watermark */}
             <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
               <KitsuneLogo size={400} />
             </div>
 
-            <nav className="flex flex-col items-center gap-8 relative z-10">
+            <nav className="my-auto flex flex-col items-center gap-6 relative z-10">
               {NAV_LINKS.map((link, i) => {
                 const isRoute = link.href.startsWith("/");
                 const baseClass =
@@ -235,10 +271,29 @@ export default function Navigation() {
                 );
               })}
 
-              <motion.a
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: NAV_LINKS.length * 0.1 }}
+                className="mt-2 flex flex-col items-center gap-3 border-t border-white/10 pt-6"
+              >
+                <span className="text-[11px] font-semibold uppercase tracking-[0.3em] text-storm-red">Hire Us</span>
+                {SERVICE_PAGE_LIST.map((service) => (
+                  <Link
+                    key={service.slug}
+                    href={`/${service.slug}`}
+                    onClick={() => setMobileOpen(false)}
+                    className="text-lg font-semibold text-storm-light hover:text-storm-red transition-colors"
+                  >
+                    {service.navLabel}
+                  </Link>
+                ))}
+              </motion.div>
+
+              <motion.a
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: (NAV_LINKS.length + 1) * 0.1 }}
                 href={SOCIALS.discord}
                 target="_blank"
                 rel="noopener noreferrer"

@@ -19,21 +19,36 @@ export const SERVICES = [
     title: "FiveM Servers",
     description: "Full server setup, management, optimization, and infrastructure — built to handle any load.",
     icon: "server",
+    href: "/fivem-developer",
+    linkLabel: "Hire a FiveM developer",
   },
   {
     title: "FiveM Scripts",
     description: "Custom scripts and resources that hit the market. 10+ sales without any marketing.",
     icon: "code",
+    href: "/fivem-developer",
+    linkLabel: "Hire a FiveM developer",
   },
   {
     title: "GTA V Cinematics",
     description: "Cinematic videos with GTA V-style production quality and ancient cinema aesthetics.",
     icon: "film",
+    href: null,
+    linkLabel: null,
   },
   {
     title: "Websites",
     description: "High-end web development — from portfolio sites to full-stack applications.",
     icon: "cube",
+    href: "/web-developer",
+    linkLabel: "Hire a web developer",
+  },
+  {
+    title: "Roblox Games",
+    description: "Luau gameplay systems, avatar and catalog features, Studio tools and 3D assets.",
+    icon: "gamepad",
+    href: "/roblox-developer",
+    linkLabel: "Hire a Roblox developer",
   },
 ] as const;
 
@@ -52,8 +67,8 @@ export const PORTFOLIO_ITEMS = [
     category: "FiveM",
     description: "Custom scripts, resources, and server development",
     image: "/images/portfolio-fivem-dev.png",
-    link: "https://tufanstudio.tebex.io/",
-    linkLabel: null,
+    link: "/fivem-developer",
+    linkLabel: "See FiveM development",
     comingSoon: false,
   },
   {
@@ -184,6 +199,8 @@ export const SOCIALS = {
   youtube: "https://youtube.com/@tufanstudio_ts",
   tebex: "https://tufanstudio.tebex.io/",
   founderDiscord: "https://discord.com/users/1215664354620608613",
+  linkedin: "https://www.linkedin.com/in/dev-nafisiqbal",
+  github: "https://github.com/drgost1",
 } as const;
 
 export const CONTACT_EMAIL = "info@tufanstudio.net";
@@ -199,6 +216,7 @@ export const PROJECT_TYPES = [
   "FiveM Script / Resource",
   "GTA V Cinematic",
   "Website / Web App",
+  "Roblox Game / Script",
   "3D Modeling / Level Design",
   "Join the Team",
   "Buy the DPH Website",

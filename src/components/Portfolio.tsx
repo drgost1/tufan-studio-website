@@ -232,8 +232,7 @@ export default function Portfolio() {
                   {item.link && (
                     <a
                       href={item.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      {...(item.link.startsWith("/") ? {} : { target: "_blank", rel: "noopener noreferrer" })}
                       className="mt-3 inline-flex items-center gap-1.5 text-sm text-storm-red hover:text-storm-red-light transition-colors"
                       onMouseDown={(e) => e.stopPropagation()}
                     >
