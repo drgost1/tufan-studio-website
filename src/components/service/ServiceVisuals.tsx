@@ -118,7 +118,7 @@ const WEB_FRAMES = [
     delay: 0.45,
   },
   {
-    image: "/images/work-yopekka.jpg",
+    image: "/images/work-yopekka-stores.jpg",
     host: "yopekka.com",
     alt: "YoPekka marketplace website",
     position: "left-[12%] bottom-0 w-[72%] z-[3]",
@@ -161,79 +161,6 @@ function WebVisual() {
 // Roblox visual //
 // ------------- //
 
-// A blocky character assembling itself, drawn in isometric. Blocks are listed in
-// paint order: back to front, bottom to top, so nearer blocks cover farther ones.
-type Block = { x: number; y: number; z: number; tone: "red" | "dark" | "light" | "steel" };
-
-const FIGURE_BLOCKS: Block[] = [
-  // Ground slab
-  ...[-2, -1, 0, 1, 2].flatMap((x) =>
-    [-2, -1, 0, 1, 2].map((y): Block => ({ x, y, z: 0, tone: "dark" })),
-  ),
-  // Legs
-  { x: 0, y: 0, z: 1, tone: "steel" },
-  { x: 0, y: 1, z: 1, tone: "steel" },
-  { x: 0, y: 0, z: 2, tone: "steel" },
-  { x: 0, y: 1, z: 2, tone: "steel" },
-  // Hands, arms and torso
-  { x: 0, y: -1, z: 3, tone: "light" },
-  { x: 0, y: 0, z: 3, tone: "red" },
-  { x: 0, y: 1, z: 3, tone: "red" },
-  { x: 0, y: 2, z: 3, tone: "light" },
-  { x: 0, y: -1, z: 4, tone: "red" },
-  { x: 0, y: 0, z: 4, tone: "red" },
-  { x: 0, y: 1, z: 4, tone: "red" },
-  { x: 0, y: 2, z: 4, tone: "red" },
-  // Head
-  { x: 0, y: 0, z: 5, tone: "light" },
-  { x: 0, y: 1, z: 5, tone: "light" },
-];
-
-const HEAD_LEVEL = 5;
-
-// An eye is a small patch on the front (right-hand) face of a head block.
-function eyePoints({ x, y, z }: Block) {
-  const centerX = ORIGIN_X + (x - y) * BLOCK_WIDTH;
-  const topY = ORIGIN_Y + (x + y) * BLOCK_DEPTH - z * BLOCK_HEIGHT;
-  const pointAt = (across: number, down: number) =>
-    `${centerX + BLOCK_WIDTH * (1 - across)},${topY + BLOCK_DEPTH * across + BLOCK_HEIGHT * down}`;
-  return [pointAt(0.35, 0.3), pointAt(0.65, 0.3), pointAt(0.65, 0.6), pointAt(0.35, 0.6)].join(" ");
-}
-
-const BLOCK_TONES = {
-  red: { top: "#FF6B6B", left: "#E63946", right: "#A50F1B" },
-  dark: { top: "#333333", left: "#1F1F1F", right: "#141414" },
-  light: { top: "#FAFAFA", left: "#C9C9C9", right: "#8F8F8F" },
-  steel: { top: "#8A8A8A", left: "#5F5F5F", right: "#3F3F3F" },
-} as const;
-
-const BLOCK_WIDTH = 26;
-const BLOCK_DEPTH = 15;
-const BLOCK_HEIGHT = 30;
-const ORIGIN_X = 200;
-const ORIGIN_Y = 245;
-
-function blockFaces({ x, y, z }: Block) {
-  const centerX = ORIGIN_X + (x - y) * BLOCK_WIDTH;
-  const topY = ORIGIN_Y + (x + y) * BLOCK_DEPTH - z * BLOCK_HEIGHT;
-  const north = `${centerX},${topY - BLOCK_DEPTH}`;
-  const east = `${centerX + BLOCK_WIDTH},${topY}`;
-  const south = `${centerX},${topY + BLOCK_DEPTH}`;
-  const west = `${centerX - BLOCK_WIDTH},${topY}`;
-  const southLow = `${centerX},${topY + BLOCK_DEPTH + BLOCK_HEIGHT}`;
-  const eastLow = `${centerX + BLOCK_WIDTH},${topY + BLOCK_HEIGHT}`;
-  const westLow = `${centerX - BLOCK_WIDTH},${topY + BLOCK_HEIGHT}`;
-  return {
-    top: `${north} ${east} ${south} ${west}`,
-    left: `${west} ${south} ${southLow} ${westLow}`,
-    right: `${east} ${south} ${southLow} ${eastLow}`,
-  };
-}
-
-const PAINT_ORDER = [...FIGURE_BLOCKS].sort(
-  (first, second) => first.z - second.z || first.x + first.y - (second.x + second.y),
-);
-
 const ROBLOX_CODE = [
   "tryOn.OnServerEvent:Connect(function(plr, id)",
   "  -- The client asks. The server decides.",
@@ -243,39 +170,28 @@ const ROBLOX_CODE = [
 ];
 
 function RobloxVisual() {
-  const reduceMotion = useReducedMotion();
+  const tiltRef = useTilt<HTMLDivElement>(".service-tilt", 6);
 
   return (
-    <div className="relative pb-16 sm:pb-12">
-      <div className="absolute inset-6 rounded-[40px] bg-storm-red/15 blur-3xl pointer-events-none" />
-      <svg
-        viewBox="0 0 400 420"
-        role="img"
-        aria-label="A blocky game character assembling itself from red, white and dark blocks"
-        className="relative mx-auto block w-full max-w-md"
-      >
-        {PAINT_ORDER.map((block, index) => {
-          const faces = blockFaces(block);
-          const tone = BLOCK_TONES[block.tone];
-          return (
-            <motion.g
-              key={`${block.x}:${block.y}:${block.z}`}
-              initial={reduceMotion ? false : { opacity: 0, y: -46 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.25 + index * 0.035, ease: EASE_OUT }}
-            >
-              <polygon points={faces.left} fill={tone.left} stroke="#0A0A0A" strokeWidth="0.8" />
-              <polygon points={faces.right} fill={tone.right} stroke="#0A0A0A" strokeWidth="0.8" />
-              <polygon points={faces.top} fill={tone.top} stroke="#0A0A0A" strokeWidth="0.8" />
-              {block.z === HEAD_LEVEL && <polygon points={eyePoints(block)} fill="#0A0A0A" />}
-            </motion.g>
-          );
-        })}
-      </svg>
+    <div ref={tiltRef} className="relative pb-24 sm:pb-20">
+      <div className="absolute -inset-6 rounded-[40px] bg-storm-red/10 blur-3xl pointer-events-none" />
+      <div className="service-tilt relative">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/work-gram-bangla-shops.jpg"
+          alt="3D render of a Bengal village market from Gram Bangla, with Bangla shop signs and tin roofs"
+          width={1110}
+          height={690}
+          className="w-full h-auto rounded-xl border border-white/10 shadow-2xl shadow-black/70"
+        />
+        <span className="absolute left-3 top-3 rounded-full bg-storm-black/75 px-3 py-1 text-[11px] font-semibold tracking-wide text-storm-light backdrop-blur-md">
+          Gram Bangla, coming soon
+        </span>
+      </div>
       <CodePanel
         fileName="ServerScriptService/TryOn.lua"
         lines={ROBLOX_CODE}
-        className="absolute bottom-0 left-1/2 w-full max-w-[30rem] -translate-x-1/2"
+        className="absolute bottom-0 right-0 w-full sm:w-[80%]"
       />
     </div>
   );

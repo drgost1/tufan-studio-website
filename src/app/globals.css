@@ -504,25 +504,6 @@ h1, h2, h3, .font-heading {
 }
 
 /* ======================== */
-/* HORIZONTAL SCROLL        */
-/* ======================== */
-
-.horizontal-scroll {
-  display: flex;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-
-.horizontal-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-.horizontal-scroll > * {
-  flex-shrink: 0;
-}
-
-/* ======================== */
 /* RED ACCENT LINE          */
 /* ======================== */
 

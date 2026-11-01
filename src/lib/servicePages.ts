@@ -237,8 +237,8 @@ export const SERVICE_PAGES: Record<ServiceSlug, ServicePageContent> = {
         label: "Marketplace",
         description:
           "A multi-seller marketplace for Bangladesh with a storefront for each seller, per-seller courier and a landing-page builder.",
-        image: "/images/work-yopekka.jpg",
-        imageAlt: "YoPekka marketplace homepage showing trending products",
+        image: "/images/work-yopekka-stores.jpg",
+        imageAlt: "YoPekka stores page showing seller store logos",
         href: "https://yopekka.com/",
         linkLabel: "Visit YoPekka",
       },
@@ -375,8 +375,22 @@ export const SERVICE_PAGES: Record<ServiceSlug, ServicePageContent> = {
     workKicker: "Real Work",
     workHeading: ["WHAT WE HAVE", "BUILT"],
     workIntro:
-      "These are the Roblox systems we have built so far. We show the systems themselves and don't claim player numbers we can't back up.",
+      "Gram Bangla is the game we are working on now, and these are the systems we have built so far. We don't claim player numbers we can't back up.",
     work: [
+      {
+        title: "Gram Bangla",
+        label: "Coming soon",
+        description: "A Roblox life sim and roleplay game set in rural Bengal. This is a 3D render of its village market.",
+        image: "/images/work-gram-bangla-shops.jpg",
+        imageAlt: "3D render of a Bengal village market with Bangla shop signs and tin roofs",
+      },
+      {
+        title: "Village 3D assets",
+        label: "Blender to Studio",
+        description: "Tea stall, benches, clay stove and more, modelled with PBR materials for Gram Bangla's village.",
+        image: "/images/work-gram-bangla-stall.jpg",
+        imageAlt: "3D render of a bamboo tea stall with a rusted tin roof and wooden benches",
+      },
       {
         title: "Catalog avatar creator",
         label: "In-game system",
