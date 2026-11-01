@@ -13,28 +13,40 @@ const SCREENSHOT_URL = "https://www.tufanstudio.net/images/tufan-terminal-screen
 
 // SoftwareApplication data — lets Google read this page as a free Windows app listing
 // (price, OS, download) instead of a plain article. Publisher points at the
-// Organization node the root layout already emits.
+// Organization node the root layout already emits. The breadcrumb shows the page's
+// place in the site in search results.
 const JSON_LD = {
   "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  name: TUFAN_TERMINAL.name,
-  description: TUFAN_TERMINAL.subhead,
-  url: PAGE_URL,
-  downloadUrl: TUFAN_TERMINAL.downloadUrl,
-  applicationCategory: "DeveloperApplication",
-  operatingSystem: "Windows 10, Windows 11",
-  fileSize: "6MB",
-  image: SCREENSHOT_URL,
-  screenshot: SCREENSHOT_URL,
-  isAccessibleForFree: true,
-  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-  publisher: { "@id": "https://www.tufanstudio.net/#organization" },
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      name: TUFAN_TERMINAL.name,
+      description: TUFAN_TERMINAL.subhead,
+      url: PAGE_URL,
+      downloadUrl: TUFAN_TERMINAL.downloadUrl,
+      applicationCategory: "DeveloperApplication",
+      operatingSystem: "Windows 10, Windows 11",
+      fileSize: "6MB",
+      image: SCREENSHOT_URL,
+      screenshot: SCREENSHOT_URL,
+      isAccessibleForFree: true,
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      publisher: { "@id": "https://www.tufanstudio.net/#organization" },
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Tufan Studio", item: "https://www.tufanstudio.net/" },
+        { "@type": "ListItem", position: 2, name: TUFAN_TERMINAL.name, item: PAGE_URL },
+      ],
+    },
+  ],
 };
 
 export const metadata: Metadata = {
   title: "Tufan Terminal",
   description:
-    "Tufan Terminal is a free, GPU-accelerated Windows terminal workspace. Group PowerShell, CMD, Git Bash, and WSL shells by project, split panes any direction, and keep everything running in the background. Free download, auto-updates.",
+    "Free, GPU-accelerated Windows terminal workspace. Group PowerShell, CMD, Git Bash and WSL shells by project, split panes and keep them all running.",
   keywords: [
     "Tufan Terminal",
     "Windows terminal app",

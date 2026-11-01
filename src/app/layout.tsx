@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import MusicPlayer from "@/components/MusicPlayer";
 import ClickBurst from "@/components/ClickBurst";
-import { BRAND, CONTACT_EMAIL, CONTACT_WHATSAPP, SOCIALS } from "@/lib/constants";
+import { BRAND, CONTACT_EMAIL, CONTACT_WHATSAPP, SERVICES, SOCIALS } from "@/lib/constants";
 import "./globals.css";
 
 // Display font for headings — bold, cinematic
@@ -29,7 +29,7 @@ const body = Inter({
 const SITE_URL = "https://www.tufanstudio.net";
 const SITE_TITLE = "Tufan Studio — FiveM Servers, Scripts, GTA V Cinematics & Web";
 const SITE_DESCRIPTION =
-  "Tufan Studio is a game development and digital studio. We build FiveM servers, sell market-ready FiveM scripts, produce GTA V-style cinematics, make Roblox games and craft high-end websites. We are the storm.";
+  "Game development and digital studio building FiveM servers and scripts, GTA V-style cinematics, Roblox games and high-end websites. We are the storm.";
 const SHARE_DESCRIPTION =
   "Game development, FiveM servers & scripts, GTA V cinematics, Roblox and web — crafted with the force of a storm.";
 
@@ -108,6 +108,19 @@ const JSON_LD = {
       telephone: CONTACT_WHATSAPP.replace(/[\s-]/g, ""),
       sameAs: [SOCIALS.youtube, SOCIALS.tebex, SOCIALS.discord],
       knowsAbout: ["FiveM", "GTA V", "Roblox", "Game development", "Web development", "3D modeling"],
+      hasOfferCatalog: {
+        "@type": "OfferCatalog",
+        name: `${BRAND.name} services`,
+        itemListElement: SERVICES.map((service) => ({
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: service.title,
+            description: service.description,
+            provider: { "@id": `${SITE_URL}/#organization` },
+          },
+        })),
+      },
     },
     {
       "@type": "WebSite",
