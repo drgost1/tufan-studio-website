@@ -183,7 +183,7 @@ export default function Contact() {
         {/* Footer */}
         <footer className="contact-animate text-center">
           <p className="text-sm text-storm-muted/60" suppressHydrationWarning>
-            &copy; {new Date().getFullYear()} {BRAND.name}. All rights reserved.
+            &copy; {new Date().getFullYear()} {BRAND.name}. All rights reserved. Sister agency: <a href="https://www.virtualonline.website/" target="_blank" rel="noopener" className="underline transition-colors hover:text-storm-red">Virtual Online</a>
           </p>
           <p className="text-xs text-storm-muted/30 mt-2 tracking-widest uppercase">
             {BRAND.tagline}
