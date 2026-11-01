@@ -11,6 +11,7 @@ import { SERVICE_PAGE_LIST, SERVICE_PAGES, type ServiceSlug, type ServiceWorkIte
 import { useSpotlight } from "@/lib/usePointerFx";
 import { useReveal } from "@/lib/useReveal";
 import ServiceVisual from "./ServiceVisuals";
+import WebsiteGallery from "./WebsiteGallery";
 
 const EASE_OUT = [0.25, 0.46, 0.45, 0.94] as const;
 
@@ -232,6 +233,8 @@ export default function ServicePageContent({ slug }: { slug: ServiceSlug }) {
           </div>
         </div>
       </section>
+
+      {slug === "web-developer" && <WebsiteGallery />}
 
       <Marquee items={page.stack} />
 

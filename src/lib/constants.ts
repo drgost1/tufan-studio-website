@@ -146,7 +146,7 @@ export const TEAM_MEMBERS = [
 ] as const;
 
 export const STATS = [
-  { label: "Projects Delivered", value: 15, suffix: "+" },
+  { label: "Projects Delivered", value: 80, suffix: "+" },
   { label: "Scripts Sold", value: 10, suffix: "+" },
   { label: "Communities Built", value: 5, suffix: "+" },
   { label: "Lines of Code", value: 50, suffix: "K+" },

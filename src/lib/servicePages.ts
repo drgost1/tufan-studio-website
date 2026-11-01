@@ -184,17 +184,17 @@ export const SERVICE_PAGES: Record<ServiceSlug, ServicePageContent> = {
     navLabel: "Web Developer",
     metaTitle: "Web Developer for Custom Websites & Web Apps",
     metaDescription:
-      "Custom website development from a studio with 60+ websites built. Laravel and Next.js sites, stores and web apps designed, deployed and run from Bangladesh.",
+      "Custom website development from a studio with 80+ websites built. Laravel and Next.js sites, stores and web apps designed, deployed and run from Bangladesh.",
     serviceType: "Custom website and web application development",
     kicker: "Custom Website Development",
     heading: "Web Developer",
-    punchline: "60+ websites built. No templates in the way.",
+    punchline: "80+ websites built. No templates in the way.",
     intro:
       "Tufan Studio, led by Nafis Iqbal, designs and builds custom websites and web apps, then deploys them and keeps them running. That covers company sites, online stores and full platforms for clients in Bangladesh, the UK, the UAE, Cyprus and Turks and Caicos.",
     watermark: "WEB",
     projectType: "Website / Web App",
     stats: [
-      { value: "60+", label: "Websites built" },
+      { value: "80+", label: "Websites built" },
       { value: "118", label: "Schools on PRS software" },
       { value: "40+", label: "Active YoPekka stores" },
       { value: "5", label: "Countries with clients" },
@@ -230,7 +230,7 @@ export const SERVICE_PAGES: Record<ServiceSlug, ServicePageContent> = {
     workKicker: "Live Work",
     workHeading: ["PRODUCTS RUNNING", "TODAY"],
     workIntro:
-      "A few of our own products, all live right now. Open any of them and judge the work for yourself.",
+      "Four of the bigger products we built and still run. The full list of live websites is further down.",
     work: [
       {
         title: "YoPekka",
