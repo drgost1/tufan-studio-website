@@ -8,6 +8,8 @@ import KitsuneLogo from "./KitsuneLogo";
 import { NAV_LINKS, SOCIALS } from "@/lib/constants";
 import { SERVICE_PAGE_LIST } from "@/lib/servicePages";
 import { DiscordIcon, MenuIcon, CloseIcon } from "./Icons";
+import { hasPageBooted, markPageBooted } from "@/lib/intro";
+import { scrollToId, scrollToTarget } from "@/lib/sections";
 
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
@@ -16,6 +18,13 @@ export default function Navigation() {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const isServicePage = SERVICE_PAGE_LIST.some((service) => pathname === `/${service.slug}`);
+  // Slides in as the home intro shutter opens. Anywhere else there is no shutter
+  // to wait for, and a nav that vanishes on every page change eats clicks.
+  const [entersWithIntro] = useState(() => isHome && !hasPageBooted());
+
+  useEffect(() => {
+    markPageBooted();
+  }, []);
 
   useEffect(() => {
     const container = document.querySelector(".scroll-container");
@@ -39,24 +48,32 @@ export default function Navigation() {
     return () => container.removeEventListener("scroll", handleScroll);
   }, [pathname]);
 
-  const scrollToSection = (href: string) => {
-    setMobileOpen(false);
-    const id = href.replace("#", "");
-    const el = document.getElementById(id);
-    const container = document.querySelector(".scroll-container");
-    if (el && container) {
-      container.scrollTo({ top: (el as HTMLElement).offsetTop, behavior: "smooth" });
-    }
-  };
+  // Keep the URL on the section in view, so Back from another page returns here
+  // and a reload stays put. Waits for the scroll to settle so a long smooth
+  // scroll doesn't rewrite it for every section it passes.
+  useEffect(() => {
+    if (!isHome || !activeSection) return;
+    const timer = setTimeout(() => {
+      const { pathname: currentPath, search, hash } = window.location;
+      const nextHash = activeSection === "hero" ? "" : `#${activeSection}`;
+      if (currentPath === "/" && hash !== nextHash) {
+        window.history.replaceState(null, "", `/${search}${nextHash}`);
+      }
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [isHome, activeSection]);
 
-  const handleLogoClick = () => {
-    if (isHome) scrollToSection("#hero");
+  // Section links are real links to /#id. On home they just scroll; from any
+  // other page they navigate client-side and useHashArrival does the jump.
+  const handleLinkClick = (event: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    setMobileOpen(false);
+    if (isHome && href.startsWith("#")) scrollToId(event, href.slice(1));
   };
 
   return (
     <>
       <motion.nav
-        initial={{ y: -100 }}
+        initial={entersWithIntro ? { y: -100 } : false}
         animate={{ y: 0 }}
         transition={{ duration: 0.8, delay: 1.5, ease: [0.25, 0.46, 0.45, 0.94] }}
         className={`fixed top-0 left-0 right-0 z-[51] transition-all duration-500 ${
@@ -69,7 +86,7 @@ export default function Navigation() {
           {/* Logo */}
           {isHome ? (
             <button
-              onClick={handleLogoClick}
+              onClick={() => scrollToTarget("hero")}
               className="flex items-center gap-3 group"
             >
               <KitsuneLogo
@@ -119,24 +136,13 @@ export default function Navigation() {
                 );
               }
 
-              if (!isHome) {
-                // Anchor lives on the home page — do a real navigation there.
-                return (
-                  <a
-                    key={link.href}
-                    href={`/${link.href}`}
-                    className="relative text-sm font-medium tracking-wide text-storm-muted hover:text-storm-light transition-colors duration-300"
-                  >
-                    {link.label}
-                  </a>
-                );
-              }
-
-              const active = activeSection === link.href.replace("#", "");
+              const active = isHome && activeSection === link.href.replace("#", "");
               return (
-                <button
+                <Link
                   key={link.href}
-                  onClick={() => scrollToSection(link.href)}
+                  href={`/${link.href}`}
+                  scroll={false}
+                  onClick={(event) => handleLinkClick(event, link.href)}
                   className="relative text-sm font-medium tracking-wide text-storm-muted hover:text-storm-light transition-colors duration-300"
                 >
                   {link.label}
@@ -147,7 +153,7 @@ export default function Navigation() {
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
                   )}
-                </button>
+                </Link>
               );
             })}
 
@@ -224,50 +230,23 @@ export default function Navigation() {
             <nav className="my-auto flex flex-col items-center gap-6 relative z-10">
               {NAV_LINKS.map((link, i) => {
                 const isRoute = link.href.startsWith("/");
-                const baseClass =
-                  "text-2xl font-bold tracking-[0.15em] uppercase text-storm-light hover:text-storm-red transition-colors";
-
-                if (isRoute) {
-                  return (
-                    <motion.div
-                      key={link.href}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.1 }}
-                    >
-                      <Link href={link.href} onClick={() => setMobileOpen(false)} className={baseClass}>
-                        {link.label}
-                      </Link>
-                    </motion.div>
-                  );
-                }
-
-                if (!isHome) {
-                  return (
-                    <motion.a
-                      key={link.href}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.1 }}
-                      href={`/${link.href}`}
-                      className={baseClass}
-                    >
-                      {link.label}
-                    </motion.a>
-                  );
-                }
 
                 return (
-                  <motion.button
+                  <motion.div
                     key={link.href}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.1 }}
-                    onClick={() => scrollToSection(link.href)}
-                    className={baseClass}
                   >
-                    {link.label}
-                  </motion.button>
+                    <Link
+                      href={isRoute ? link.href : `/${link.href}`}
+                      scroll={isRoute}
+                      onClick={(event) => handleLinkClick(event, link.href)}
+                      className="text-2xl font-bold tracking-[0.15em] uppercase text-storm-light hover:text-storm-red transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  </motion.div>
                 );
               })}
 

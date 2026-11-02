@@ -12,8 +12,11 @@ import Team from "@/components/Team";
 import Contact from "@/components/Contact";
 import CustomCursor from "@/components/CustomCursor";
 import ScrollProgress from "@/components/ScrollProgress";
+import { useHashArrival } from "@/lib/sections";
 
 export default function Home() {
+  useHashArrival();
+
   return (
     <>
       <LoadingScreen />

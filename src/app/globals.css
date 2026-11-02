@@ -30,7 +30,7 @@ h1, h2, h3, .font-heading {
   height: 100vh;
   overflow-y: auto;
   scroll-snap-type: y mandatory;
-  scroll-behavior: smooth;
+  /* No scroll-behavior: smooth here, it breaks hash links. See lib/sections.ts */
 }
 
 /* Pages built as a normal flowing document (not a full-viewport snap deck)

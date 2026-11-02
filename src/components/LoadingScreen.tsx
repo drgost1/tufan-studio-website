@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import KitsuneLogo from "./KitsuneLogo";
-import { markIntroDone, resetIntro } from "@/lib/intro";
+import { hasPageBooted, markIntroDone, resetIntro } from "@/lib/intro";
 
 const FIRST_VISIT_MS = 1600;
 const REPEAT_VISIT_MS = 650;
@@ -11,12 +11,17 @@ const SEEN_KEY = "tufan:intro-seen";
 const SHUTTER_EASE = [0.76, 0, 0.24, 1] as const;
 
 export default function LoadingScreen() {
-  const [loading, setLoading] = useState(true);
+  const [skipIntro] = useState(hasPageBooted);
+  const [loading, setLoading] = useState(!skipIntro);
   const counterRef = useRef<HTMLSpanElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     resetIntro();
+    if (skipIntro) {
+      markIntroDone();
+      return;
+    }
 
     let seen = false;
     try {
@@ -47,7 +52,7 @@ export default function LoadingScreen() {
       cancelAnimationFrame(frame);
       window.clearTimeout(timer);
     };
-  }, []);
+  }, [skipIntro]);
 
   return (
     <AnimatePresence>

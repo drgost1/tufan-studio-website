@@ -8,16 +8,9 @@ import KitsuneLogo from "./KitsuneLogo";
 import Marquee from "./Marquee";
 import { BRAND } from "@/lib/constants";
 import { onIntroDone } from "@/lib/intro";
+import { scrollToId } from "@/lib/sections";
 
 const HERO_SERVICES = ["FiveM Servers & Scripts", "GTA V Cinematics", "Roblox", "Websites"];
-
-/** Scroll inside the snap container — the hash alone does not move it. */
-function scrollToId(event: React.MouseEvent<HTMLAnchorElement>, id: string) {
-  const target = document.getElementById(id);
-  if (!target) return;
-  event.preventDefault();
-  target.scrollIntoView({ behavior: "smooth", block: id === "contact-form" ? "center" : "start" });
-}
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);

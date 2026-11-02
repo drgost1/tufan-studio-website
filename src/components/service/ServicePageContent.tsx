@@ -7,6 +7,7 @@ import FloatingEmbers from "@/components/FloatingEmbers";
 import Marquee from "@/components/Marquee";
 import { DiscordIcon, ExternalLinkIcon, MailIcon, SERVICE_ICONS, WhatsappIcon } from "@/components/Icons";
 import { CONTACT_EMAIL, SOCIALS } from "@/lib/constants";
+import { scrollToId } from "@/lib/sections";
 import { SERVICE_PAGE_LIST, SERVICE_PAGES, type ServiceSlug, type ServiceWorkItem } from "@/lib/servicePages";
 import { useSpotlight } from "@/lib/usePointerFx";
 import { useReveal } from "@/lib/useReveal";
@@ -145,12 +146,14 @@ export default function ServicePageContent({ slug }: { slug: ServiceSlug }) {
             <motion.div {...riseIn(0.4)} className="flex flex-wrap items-center gap-4">
               <a
                 href="#quote"
+                onClick={(event) => scrollToId(event, "quote")}
                 className="glow-btn inline-flex items-center rounded-2xl bg-storm-red px-8 py-4 text-base font-bold text-white transition-all duration-300 hover:scale-[1.03] hover:bg-storm-red-dark sm:px-10 sm:text-lg"
               >
                 Get a Quote
               </a>
               <a
                 href="#work"
+                onClick={(event) => scrollToId(event, "work")}
                 className="inline-flex items-center rounded-2xl border border-white/15 px-7 py-4 text-base font-semibold text-storm-light transition-colors duration-300 hover:border-storm-red/60 hover:text-storm-red-light"
               >
                 See the Work

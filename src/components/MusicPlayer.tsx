@@ -17,12 +17,14 @@ export default function MusicPlayer() {
   const [volume, setVolume] = useState(15);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const pathname = usePathname();
+  // Lives in the layout, so an unanswered prompt must not follow the visitor off home
+  const promptVisible = showPrompt && pathname === "/";
 
   useEffect(() => {
     const timer = setTimeout(() => {
       const prompted = sessionStorage.getItem("music-prompted");
-      // Only the home page asks: a full-screen prompt would interrupt someone
-      // reading a service page they found through search.
+      // Only the home page asks: it would interrupt someone reading a service
+      // page they found through search.
       if (!prompted && pathname === "/") {
         setShowPrompt(true);
       } else {
@@ -111,46 +113,46 @@ export default function MusicPlayer() {
 
   return (
     <>
-      {/* Music prompt */}
+      {/* Music prompt: a corner card, never a full-screen layer. It appears on a
+          timer, so a modal would swallow whatever the visitor was clicking. */}
       <AnimatePresence>
-        {showPrompt && (
+        {promptVisible && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] bg-storm-black/80 backdrop-blur-md flex items-center justify-center px-6"
+            role="dialog"
+            aria-label="Background music"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 24 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            className="fixed bottom-6 left-4 right-4 z-[90] sm:left-6 sm:right-auto sm:w-80 bg-storm-dark/95 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-xl shadow-black/40"
           >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              className="bg-storm-dark border border-white/10 rounded-2xl p-8 max-w-sm w-full text-center"
-            >
-              <div className="w-16 h-16 mx-auto mb-5 rounded-full bg-storm-red/10 flex items-center justify-center">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E63946" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 shrink-0 rounded-full bg-storm-red/10 flex items-center justify-center">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E63946" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 18V5l12-2v13" />
                   <circle cx="6" cy="18" r="3" />
                   <circle cx="18" cy="16" r="3" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-storm-light mb-2">Enable Background Music?</h3>
-              <p className="text-sm text-storm-muted mb-6">Enhance your experience with ambient music while browsing.</p>
-              <div className="flex gap-3">
-                <button onClick={handleDecline} className="flex-1 px-4 py-2.5 rounded-xl border border-white/10 text-storm-muted hover:text-storm-light hover:border-white/20 transition-all text-sm font-medium">
-                  No thanks
-                </button>
-                <button onClick={handleAccept} className="flex-1 px-4 py-2.5 rounded-xl bg-storm-red hover:bg-storm-red-dark text-white transition-all text-sm font-bold glow-btn">
-                  Play Music
-                </button>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-storm-light">Enable Background Music?</p>
+                <p className="text-xs text-storm-muted">Ambient music while you browse.</p>
               </div>
-            </motion.div>
+            </div>
+            <div className="flex gap-2">
+              <button onClick={handleDecline} className="flex-1 min-h-11 px-3 rounded-xl border border-white/10 text-storm-muted hover:text-storm-light hover:border-white/20 transition-all text-sm font-medium">
+                No thanks
+              </button>
+              <button onClick={handleAccept} className="flex-1 min-h-11 px-3 rounded-xl bg-storm-red hover:bg-storm-red-dark text-white transition-all text-sm font-bold glow-btn">
+                Play Music
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Bottom-left controller */}
-      {asked && (
+      {asked && !promptVisible && (
         <div className="fixed bottom-6 left-6 z-[90]">
           <AnimatePresence mode="wait">
             {!expanded ? (

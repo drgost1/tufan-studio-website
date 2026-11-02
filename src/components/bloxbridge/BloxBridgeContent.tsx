@@ -5,6 +5,7 @@ import Link from "next/link";
 import FloatingEmbers from "@/components/FloatingEmbers";
 import { BLOX_BRIDGE_FEATURE_ICONS, DiscordIcon, ExternalLinkIcon } from "@/components/Icons";
 import { SOCIALS } from "@/lib/constants";
+import { scrollToId } from "@/lib/sections";
 import {
   BLOX_BRIDGE,
   BLOX_BRIDGE_AI_PROMPT,
@@ -123,6 +124,7 @@ export default function BloxBridgeContent() {
               </a>
               <a
                 href="#install"
+                onClick={(event) => scrollToId(event, "install")}
                 className="inline-flex min-h-11 items-center rounded-xl border border-white/15 px-7 py-3.5 text-sm font-semibold text-storm-light transition-all duration-300 hover:border-storm-red/50 hover:bg-white/5 sm:text-base"
               >
                 Install it

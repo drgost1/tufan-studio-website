@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { PROJECT_TYPES, BUDGET_RANGES, CONTACT_EMAIL } from "@/lib/constants";
-import { onIntroDone } from "@/lib/intro";
 
 type Status = "idle" | "sending" | "sent" | "error";
 
@@ -32,25 +31,8 @@ export default function ContactForm({ defaultType = PROJECT_TYPES[0] }: { defaul
     };
     applyHash();
 
-    // Arriving from another site (the DPH "Buy this website" button) with that
-    // hash: it is not a real element id, so the browser never jumps to the form.
-    // Scroll there ourselves once the intro shutter has opened.
-    let stopWaiting = () => {};
-    let scrollTimer: number | undefined;
-    if (/^#contact-form\?type=/.test(window.location.hash)) {
-      stopWaiting = onIntroDone(() => {
-        scrollTimer = window.setTimeout(() => {
-          document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth", block: "center" });
-        }, 350);
-      });
-    }
-
     window.addEventListener("hashchange", applyHash);
-    return () => {
-      stopWaiting();
-      window.clearTimeout(scrollTimer);
-      window.removeEventListener("hashchange", applyHash);
-    };
+    return () => window.removeEventListener("hashchange", applyHash);
   }, []);
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
