@@ -96,8 +96,8 @@ export const PORTFOLIO_MORE = [
   { title: "FiveM Development", category: "FiveM", image: "/images/portfolio-fivem-dev.png", link: "/fivem-developer" },
   { title: "Cinematic Videos", category: "Cinematics", image: "/images/portfolio-cinematics.png", link: "https://youtube.com/@tufanstudio_ts" },
   { title: "PRS Result Software", category: "School Software", image: "/images/work-prs.jpg", link: "https://perfectnresults.com/" },
-  { title: "Tufan Health", category: "Health App", image: "/images/portfolio-health.jpg", link: "https://health.tufanstudio.net/" },
-  { title: "Monopoly", category: "Browser Game", image: "/images/portfolio-monopoly.jpg", link: "https://monopoly.tufanstudio.net/" },
+  { title: "Tufan Terminal", category: "Desktop App", image: "/images/tufan-terminal-screenshot.png", link: "/tufan-terminal" },
+  { title: "Roblox Studio MCP", category: "Open Source", image: "/images/portfolio-roblox-mcp.jpg", link: "/roblox-studio-mcp" },
   { title: "Digital Products House", category: "Showcase, For Sale", image: "/images/portfolio-dph.jpg", link: "https://digitalproductshouse.tufanstudio.net/" },
 ] as const;
 
