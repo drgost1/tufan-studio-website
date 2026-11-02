@@ -254,7 +254,7 @@ export default function BloxBridgeContent() {
                 width={BLOX_BRIDGE.images.widget.width}
                 height={BLOX_BRIDGE.images.widget.height}
                 loading="lazy"
-                className="mx-auto h-auto w-full max-w-sm rounded-xl border border-white/10"
+                className="mx-auto h-auto w-full max-w-[282px] rounded-xl border border-white/10"
               />
               <figcaption className="mt-3 text-center text-sm text-storm-muted">
                 The plugin panel: connection status, git buttons and a live activity feed.

@@ -17,10 +17,10 @@ export const BLOX_BRIDGE = {
     "A free Roblox Studio MCP server and plugin. Connect Claude Code or Cursor to Studio, and every AI edit comes with snapshots, git history and a backdoor scanner.",
   images: {
     widget: {
-      src: "/images/roblox-mcp/plugin-widget.png",
+      src: "/images/roblox-mcp/plugin-widget.png?v=2",
       alt: "The Tufan-Blox-Bridge plugin panel in Roblox Studio, connected to a place",
-      width: 560,
-      height: 556,
+      width: 282,
+      height: 282,
     },
     studio: {
       src: "/images/roblox-mcp/studio-plugin.webp",
@@ -29,7 +29,7 @@ export const BLOX_BRIDGE = {
       height: 867,
     },
     social: {
-      src: "/images/roblox-mcp/social-preview.png",
+      src: "/images/roblox-mcp/social-preview.png?v=2",
       alt: "Tufan-Blox-Bridge, a Roblox Studio MCP server and plugin",
       width: 1280,
       height: 640,
