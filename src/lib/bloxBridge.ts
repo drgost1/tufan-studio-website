@@ -23,7 +23,7 @@ export const BLOX_BRIDGE = {
       height: 282,
     },
     studio: {
-      src: "/images/roblox-mcp/studio-plugin.webp",
+      src: "/images/roblox-mcp/studio-plugin.webp?v=2",
       alt: "Roblox Studio with the Tufan-Blox-Bridge plugin panel open beside a place",
       width: 1600,
       height: 867,
