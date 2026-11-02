@@ -9,6 +9,7 @@ export const NAV_LINKS = [
   { label: "Services", href: "#services" },
   { label: "Portfolio", href: "#portfolio" },
   { label: "Terminal", href: "/tufan-terminal" },
+  { label: "Roblox MCP", href: "/roblox-studio-mcp" },
   { label: "About", href: "#about" },
   { label: "Team", href: "#team" },
   { label: "Contact", href: "#contact" },

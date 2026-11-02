@@ -93,7 +93,7 @@ export default function Navigation() {
           )}
 
           {/* Desktop Nav Links */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden lg:flex items-center gap-8 whitespace-nowrap">
             {NAV_LINKS.map((link) => {
               const isRoute = link.href.startsWith("/");
 
@@ -200,7 +200,7 @@ export default function Navigation() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden text-storm-light p-2"
+            className="lg:hidden text-storm-light p-2"
           >
             {mobileOpen ? <CloseIcon /> : <MenuIcon />}
           </button>

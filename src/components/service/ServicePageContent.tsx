@@ -83,7 +83,17 @@ function WorkRow({ item, index }: { item: ServiceWorkItem; index: number }) {
           {item.label}
         </span>
       </div>
-      <p className="min-w-0 text-sm leading-relaxed text-storm-muted sm:text-base">{item.description}</p>
+      <div className="min-w-0">
+        <p className="text-sm leading-relaxed text-storm-muted sm:text-base">{item.description}</p>
+        {item.href && (
+          <Link
+            href={item.href}
+            className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-storm-light transition-colors duration-300 hover:text-storm-red"
+          >
+            {item.linkLabel} &rarr;
+          </Link>
+        )}
+      </div>
     </article>
   );
 }

@@ -958,7 +958,66 @@ body {
   background: #0A0A0A;
 }
 
+/* Hero entrance that needs no JavaScript, so the text and image still show in a
+   renderer that doesn't run animation frames, and the image paints straight away. */
+.rise-in {
+  animation: rise-in 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* The animated link between two nodes of the Roblox MCP diagram: a pulse runs
+   along it to show commands moving. Vertical on phones, horizontal on desktop. */
+.bridge-link {
+  position: relative;
+  flex-shrink: 0;
+  width: 1px;
+  height: 2.5rem;
+  background: rgba(230, 57, 70, 0.35);
+  overflow: hidden;
+}
+
+.bridge-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 40%;
+  background: #ff6b6b;
+  box-shadow: 0 0 10px #e63946;
+  animation: bridge-pulse-down 1.8s linear infinite;
+}
+
+@media (min-width: 1024px) {
+  .bridge-link {
+    width: 100%;
+    height: 1px;
+  }
+
+  .bridge-link::after {
+    width: 40%;
+    height: 1px;
+    animation-name: bridge-pulse-across;
+  }
+}
+
+@keyframes bridge-pulse-down {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(250%); }
+}
+
+@keyframes bridge-pulse-across {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(250%); }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .rise-in,
+  .bridge-link::after,
   .section-watermark,
   .sheen::after,
   .hud-scan,

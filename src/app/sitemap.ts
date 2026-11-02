@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { BLOX_BRIDGE } from "@/lib/bloxBridge";
 import { SERVICE_PAGE_LIST, SITE_URL } from "@/lib/servicePages";
 
 // No lastModified: `new Date()` stamped every URL with the build time, a date
@@ -14,6 +15,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: "https://www.tufanstudio.net/tufan-terminal",
       changeFrequency: "monthly",
       priority: 0.8,
+    },
+    {
+      url: `${SITE_URL}/${BLOX_BRIDGE.slug}`,
+      changeFrequency: "monthly",
+      priority: 0.9,
     },
     ...SERVICE_PAGE_LIST.map((page) => ({
       url: `${SITE_URL}/${page.slug}`,

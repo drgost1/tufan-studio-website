@@ -303,3 +303,45 @@ export const TERMINAL_FEATURE_ICONS: Record<string, React.FC<{ className?: strin
   refresh: RefreshIcon,
   shells: ShellsIcon,
 };
+
+export function UndoIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg {...iconProps} viewBox="0 0 24 24" className={className}>
+      <path d="M3 7v6h6" />
+      <path d="M3 13a9 9 0 1 1 3 6.7" />
+    </svg>
+  );
+}
+
+export function GitBranchIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg {...iconProps} viewBox="0 0 24 24" className={className}>
+      <circle cx="6" cy="5" r="2.5" />
+      <circle cx="6" cy="19" r="2.5" />
+      <circle cx="18" cy="7" r="2.5" />
+      <path d="M6 7.5v9" />
+      <path d="M18 9.5c0 4-5 4-12 6" />
+    </svg>
+  );
+}
+
+export function ShieldIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg {...iconProps} viewBox="0 0 24 24" className={className}>
+      <path d="M12 3 4 6v6c0 4.5 3.2 7.8 8 9 4.8-1.2 8-4.5 8-9V6l-8-3Z" />
+      <path d="m9 12 2 2 4-4" />
+    </svg>
+  );
+}
+
+export const BLOX_BRIDGE_FEATURE_ICONS: Record<string, React.FC<{ className?: string }>> = {
+  undo: UndoIcon,
+  refresh: RefreshIcon,
+  branch: GitBranchIcon,
+  shield: ShieldIcon,
+  code: CodeIcon,
+  cube: CubeIcon,
+  gpu: GpuIcon,
+  server: ServerIcon,
+  search: SearchIcon,
+};

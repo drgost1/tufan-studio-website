@@ -392,6 +392,13 @@ export const SERVICE_PAGES: Record<ServiceSlug, ServicePageContent> = {
         imageAlt: "3D render of a bamboo tea stall with a rusted tin roof and wooden benches",
       },
       {
+        title: "Tufan-Blox-Bridge",
+        label: "Roblox Studio MCP",
+        description: "Our free, open-source Roblox Studio MCP server and plugin. It connects Claude Code or Cursor to Studio with 85 tools.",
+        href: "/roblox-studio-mcp",
+        linkLabel: "See the plugin",
+      },
+      {
         title: "Catalog avatar creator",
         label: "In-game system",
         description: "Players browse the Roblox catalog from inside the game and try items on their avatar before deciding.",
