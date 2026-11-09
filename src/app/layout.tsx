@@ -29,7 +29,7 @@ const body = Inter({
 const SITE_URL = "https://www.tufanstudio.net";
 const SITE_TITLE = "Tufan Studio — FiveM Servers, Scripts, GTA V Cinematics & Web";
 const SITE_DESCRIPTION =
-  "Game development and digital studio building FiveM servers and scripts, GTA V-style cinematics, Roblox games and high-end websites. We are the storm.";
+  "Bangladesh-based game development and digital studio building FiveM servers and scripts, GTA V-style cinematics, Roblox games and high-end websites. We are the storm.";
 const SHARE_DESCRIPTION =
   "Game development, FiveM servers & scripts, GTA V cinematics, Roblox and web — crafted with the force of a storm.";
 
@@ -106,6 +106,17 @@ const JSON_LD = {
       description: SITE_DESCRIPTION,
       email: CONTACT_EMAIL,
       telephone: CONTACT_WHATSAPP.replace(/[\s-]/g, ""),
+      // Country only: the studio is remote, and a street address it doesn't
+      // publish would be a claim the site can't back up.
+      address: { "@type": "PostalAddress", addressCountry: "BD" },
+      areaServed: "Worldwide",
+      contactPoint: {
+        "@type": "ContactPoint",
+        contactType: "customer support",
+        email: CONTACT_EMAIL,
+        telephone: CONTACT_WHATSAPP.replace(/[\s-]/g, ""),
+        availableLanguage: ["English", "Bengali"],
+      },
       sameAs: [SOCIALS.youtube, SOCIALS.tebex, SOCIALS.discord],
       knowsAbout: ["FiveM", "GTA V", "Roblox", "Game development", "Web development", "3D modeling"],
       founder: {

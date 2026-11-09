@@ -139,7 +139,7 @@ export default function About() {
 
             <h2 className="about-line text-4xl sm:text-5xl font-black tracking-tight text-storm-black mb-6">
               THE STORM{" "}
-              <span className="text-storm-red">BEHIND</span>
+              <span className="text-storm-red">BEHIND</span>{" "}
               <br />
               THE SCREENS
             </h2>

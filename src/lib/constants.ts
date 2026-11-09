@@ -25,7 +25,7 @@ export const SERVICES = [
   },
   {
     title: "FiveM Scripts",
-    description: "Custom scripts and resources that hit the market. 10+ sales without any marketing.",
+    description: "Custom scripts and resources for Qbox, QBCore and ESX, sold in our own Tebex store.",
     icon: "code",
     href: "/fivem-developer",
     linkLabel: "Hire a FiveM developer",
@@ -148,7 +148,7 @@ export const TEAM_MEMBERS = [
 
 export const STATS = [
   { label: "Projects Delivered", value: 80, suffix: "+" },
-  { label: "Scripts Sold", value: 10, suffix: "+" },
+  { label: "Live Websites", value: 45, suffix: "+" },
   { label: "Communities Built", value: 5, suffix: "+" },
   { label: "Lines of Code", value: 50, suffix: "K+" },
 ] as const;
