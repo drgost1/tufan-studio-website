@@ -218,7 +218,7 @@ export default function BloxBridgeContent() {
       {/* Features */}
       <section className="relative bg-storm-dark px-6 py-16 sm:py-24 section-fade-top">
         <div className="relative z-10 mx-auto max-w-7xl min-w-0">
-          <SectionHeading kicker="85 Tools" lead="WHAT YOUR AI CAN DO IN" accent="ROBLOX STUDIO" />
+          <SectionHeading kicker="87 Tools" lead="WHAT YOUR AI CAN DO IN" accent="ROBLOX STUDIO" />
           <div ref={featuresRef} className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
             {BLOX_BRIDGE_FEATURES.map((feature) => {
               const IconComponent = BLOX_BRIDGE_FEATURE_ICONS[feature.icon];

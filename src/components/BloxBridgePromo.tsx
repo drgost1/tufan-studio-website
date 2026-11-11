@@ -11,7 +11,7 @@ export default function BloxBridgePromo() {
       name={BLOX_BRIDGE.name}
       punchline="Roblox Studio MCP server and plugin."
       pitch={BLOX_BRIDGE.homePitch}
-      footnote="Free · MIT · 85 tools · Claude Code, Cursor, any MCP client"
+      footnote="Free · MIT · 87 tools · Claude Code, Cursor, any MCP client"
       learnMoreHref={`/${BLOX_BRIDGE.slug}`}
       image={{
         src: BLOX_BRIDGE.images.studio.src,

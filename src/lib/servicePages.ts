@@ -394,7 +394,7 @@ export const SERVICE_PAGES: Record<ServiceSlug, ServicePageContent> = {
       {
         title: "Tufan-Blox-Bridge",
         label: "Roblox Studio MCP",
-        description: "Our free, open-source Roblox Studio MCP server and plugin. It connects Claude Code or Cursor to Studio with 85 tools.",
+        description: "Our free, open-source Roblox Studio MCP server and plugin. It connects Claude Code or Cursor to Studio with 87 tools.",
         href: "/roblox-studio-mcp",
         linkLabel: "See the plugin",
       },

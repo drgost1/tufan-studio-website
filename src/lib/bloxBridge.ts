@@ -10,9 +10,9 @@ export const BLOX_BRIDGE = {
   installCommand: "npx -y tufan-blox-bridge@latest setup",
   metaTitle: "Roblox Studio MCP Server and Plugin | Tufan-Blox-Bridge",
   metaDescription:
-    "Free Roblox Studio MCP server and plugin. Connect Claude Code, Cursor or any MCP client to Studio with 85 tools, git history, snapshots and a backdoor scanner.",
+    "Free Roblox Studio MCP server and plugin. Connect Claude Code, Cursor or any MCP client to Studio with 87 tools, git history, snapshots, a disk backup of your GUIs and a backdoor scanner.",
   intro:
-    "Tufan-Blox-Bridge connects Claude Code, Cursor or any MCP client to Roblox Studio. Your AI gets 85 tools for Luau scripts, instances and properties, and you get snapshots, git history and a backdoor scanner to keep its work safe.",
+    "Tufan-Blox-Bridge connects Claude Code, Cursor or any MCP client to Roblox Studio. Your AI gets 87 tools for Luau scripts, instances and properties, and you get snapshots, a disk backup of every GUI and model, git history and a backdoor scanner to keep its work safe.",
   homePitch:
     "A free Roblox Studio MCP server and plugin. Connect Claude Code or Cursor to Studio, and every AI edit comes with snapshots, git history and a backdoor scanner.",
   images: {
@@ -29,7 +29,7 @@ export const BLOX_BRIDGE = {
       height: 867,
     },
     social: {
-      src: "/images/roblox-mcp/social-preview.png?v=2",
+      src: "/images/roblox-mcp/social-preview.png?v=3",
       alt: "Tufan-Blox-Bridge, a Roblox Studio MCP server and plugin",
       width: 1280,
       height: 640,
@@ -45,7 +45,7 @@ export const BLOX_BRIDGE_AI_PROMPT = `Set up Tufan-Blox-Bridge, a Roblox Studio 
 4. Tell me what it did and the next steps it printed.`;
 
 export const BLOX_BRIDGE_STATS = [
-  { value: "85", label: "MCP tools" },
+  { value: "87", label: "MCP tools" },
   { value: "MIT", label: "Open source" },
   { value: "$0", label: "Free to use" },
 ] as const;
@@ -78,8 +78,8 @@ export const BLOX_BRIDGE_FEATURES = [
     icon: "undo",
   },
   {
-    title: "Scripts on disk, both ways",
-    description: "Open a place and its scripts mirror to a folder. Edit a file and Studio updates. Edit in Studio and the file updates.",
+    title: "Your place on disk, with history",
+    description: "Scripts sync both ways, and GUIs, folders and models save as .rbxm seconds after a change. Delete something or hit Ctrl+Z by mistake and restore_from_mirror brings it back.",
     icon: "refresh",
   },
   {
@@ -114,7 +114,7 @@ export const BLOX_BRIDGE_FEATURES = [
   },
   {
     title: "Read-only mode",
-    description: "Set TUFAN_READONLY=1 and the 36 write tools disappear, so an AI can explore your game with no chance of changing it.",
+    description: "Set TUFAN_READONLY=1 and the 37 write tools disappear, so an AI can explore your game with no chance of changing it.",
     icon: "search",
   },
 ] as const;
@@ -126,6 +126,7 @@ export const BLOX_BRIDGE_COMPARISON = [
   { job: "Debug inside a running game", builtIn: "Use this", tufan: "Warns the AI and points it there" },
   { job: "Checkpoint and restore after a bad AI edit", builtIn: "Not included", tufan: "snapshot / restore" },
   { job: "Keep scripts on disk with two-way sync", builtIn: "Not included", tufan: "Automatic mirror" },
+  { job: "Get back a GUI or model a delete or Ctrl+Z wiped", builtIn: "Not included", tufan: "restore_from_mirror" },
   { job: "Commit, diff and recover deleted scripts", builtIn: "Not included", tufan: "12 git tools" },
   { job: "Scan free models for backdoors", builtIn: "Not included", tufan: "scan_backdoors" },
   { job: "Lint, type-check and format Luau", builtIn: "Not included", tufan: "Selene, luau-lsp, StyLua" },
